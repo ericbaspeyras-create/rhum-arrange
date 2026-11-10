@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#9E2A17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Rhum Arrangé">
+<meta name="description" content="Compose ton rhum arrangé : parfums, degré, méthode et recette pas à pas.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Atelier Rhum Arrangé</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Alegreya:wght@400;500;700;800&display=swap">
+<style>
+/* Layout : carte au trésor sur parchemin, une colonne ; une colonne ; bocal illustré en tête qui se remplit des parfums, couvercle = voyant */
+:root{
+  --bg:#E6D2A8; --panel:#F0E0BC; --panel2:#DDC495; --line:#9C7744;
+  --fg:#2A1A0D; --muted:#6B4E2E; --amber:#9E2A17; --amber-ink:#F7E9C8; --cane:#8A6416; --gold:#C8962E;
+  --ok:#2E7D3A; --mid:#C27400; --bad:#B3221A;
+  --display:"Pirata One","Blackletter",Georgia,serif;
+  --body:"Alegreya",Georgia,"Times New Roman",serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background-color:var(--bg);background-image:radial-gradient(circle at 12% 8%,rgba(122,74,24,.22),transparent 32%),radial-gradient(circle at 92% 38%,rgba(122,74,24,.16),transparent 30%),radial-gradient(circle at 30% 88%,rgba(122,74,24,.18),transparent 35%);background-attachment:fixed;color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:18px 40px}
+.wrap{width:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-family:var(--display);font-weight:400;font-size:1.9rem;line-height:1;margin:0;color:var(--amber);text-wrap:balance}
+h2{font-family:var(--display);font-weight:400;font-size:1.05rem;margin:0;letter-spacing:.02em}
+.kicker{font-size:.72rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--cane)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* Bocal + voyant */
+.hero{display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:center}
+.hero svg{width:118px;height:auto;display:block}
+.lid{transition:fill .3s}
+.lid.v{fill:var(--ok)} .lid.o{fill:var(--mid);animation:blink 1.1s ease-in-out infinite} .lid.r{fill:var(--bad);animation:blink .45s steps(2,end) infinite} .lid.n{fill:#6B5A48}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
+.badge{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:1.05rem}
+.badge i{width:12px;height:12px;border-radius:50%;display:inline-block}
+.badge.v i{background:var(--ok)} .badge.o i{background:var(--mid);animation:blink 1.1s infinite} .badge.r i{background:var(--bad);animation:blink .45s steps(2,end) infinite} .badge.n i{background:#6B5A48}
+.badge.v{color:var(--ok)} .badge.o{color:var(--mid)} .badge.r{color:var(--bad)}
+.reason{margin:4px 0 0;color:var(--fg);font-size:.95rem}
+.more{margin-top:6px;font-size:.85rem;color:var(--muted)}
+.more summary{cursor:pointer;color:var(--amber);font-weight:600}
+.more ul{margin:6px 0 0;padding-left:16px}
+.picked{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.pk{display:inline-flex;align-items:center;gap:6px;padding:4px 4px 4px 10px;border-radius:999px;background:var(--panel2);font-size:.85rem;font-weight:600;border:1.5px solid transparent}
+.pk.o{border-color:var(--mid)} .pk.r{border-color:var(--bad);animation:blink .45s steps(2,end) infinite}
+.pk button{border:0;background:transparent;color:var(--muted);width:24px;height:24px;border-radius:50%;font-size:1rem;line-height:1}
+
+/* Panneaux */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -4px;padding:0 4px 2px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;border:0;background:var(--panel2);color:var(--muted);padding:7px 12px;border-radius:999px;font-size:.85rem;font-weight:600;white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--fg);color:var(--bg)}
+.tab b{display:inline-block;min-width:18px;margin-left:4px;padding:0 5px;border-radius:9px;background:var(--amber);color:var(--amber-ink);font-size:.72rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.ing{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px;border-radius:14px;border:1.5px solid var(--line);background:transparent;font-size:.82rem;font-weight:600;text-align:center;line-height:1.15;min-height:78px;justify-content:center}
+.ing .sw{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+.ing[aria-pressed="true"]{border-color:var(--amber);background:var(--panel2)}
+.ing[aria-pressed="true"] .sw{box-shadow:0 0 0 3px var(--amber)}
+.custom{display:flex;gap:8px}
+.custom input{flex:1;min-width:0;font:inherit;padding:11px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--fg)}
+.custom input::placeholder{color:var(--muted)}
+.btn{border:0;border-radius:12px;padding:11px 14px;font-weight:800;background:var(--panel2);color:var(--fg)}
+.btn.amber{background:var(--amber);color:var(--amber-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.ask-out{font-size:.88rem;color:var(--muted)}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{border:1.5px solid var(--line);background:transparent;border-radius:14px;padding:12px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.opt strong{font-size:.98rem}
+.opt span{font-size:.8rem;color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--amber);background:var(--panel2)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.row label{font-weight:600;font-size:.95rem}
+.big{font-family:var(--display);font-size:1.35rem;color:var(--amber);font-variant-numeric:tabular-nums;min-width:64px;text-align:center}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:38px;height:38px;border-radius:11px;border:0;background:var(--panel2);font-size:1.2rem}
+.seg{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px}
+.seg button{flex:1;border:0;background:transparent;padding:8px 4px;border-radius:9px;font-size:.82rem;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--panel2);color:var(--fg)}
+.label-sm{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ticket{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px 14px;border-radius:12px;border:1.5px dashed var(--line);font-variant-numeric:tabular-nums;font-size:.92rem}
+.ticket b{text-align:right}
+.ticket .tot{border-top:1px dashed var(--line);padding-top:6px;font-weight:800;color:var(--amber)}
+.warn{font-size:.85rem;color:var(--mid)}
+.go{width:100%;padding:16px;border:0;border-radius:16px;background:var(--amber);color:var(--amber-ink);font-family:var(--display);font-size:1.2rem;letter-spacing:.03em;box-shadow:0 8px 24px -10px var(--amber)}
+.go:disabled{opacity:.4}
+
+/* Pages et listes verticales */
+.progress{display:flex;gap:6px}
+.progress button{flex:1;border:0;background:transparent;padding:0;display:flex;flex-direction:column;gap:6px;text-align:left;font-size:.78rem;font-weight:700;color:var(--muted)}
+.progress button::before{content:"";height:4px;border-radius:2px;background:var(--line)}
+.progress button[aria-current="step"],.progress button.past{color:var(--fg)}
+.progress button[aria-current="step"]::before,.progress button.past::before{background:var(--amber)}
+.dial{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dial button{width:56px;height:56px;border-radius:16px;border:0;background:var(--panel2);font-size:1.6rem}
+.huge{font-family:var(--display);font-size:2.4rem;color:var(--amber);font-variant-numeric:tabular-nums}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1.5px solid var(--line);background:transparent;border-radius:14px;padding:12px 14px}
+.item[aria-pressed="true"]{border-color:var(--amber);background:var(--panel2)}
+.item .sw{width:22px;height:22px;border-radius:50%;flex:none;box-shadow:inset 0 -3px 0 rgba(0,0,0,.25)}
+.item .tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.item .tx strong{font-size:.98rem}
+.item .tx span{font-size:.8rem;color:var(--muted)}
+.item .qt{font-weight:800;color:var(--amber);white-space:nowrap;font-variant-numeric:tabular-nums}
+.item .ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:.8rem;font-weight:900}
+.item[aria-pressed="true"] .ck{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
+.shop li.tot{font-weight:800;color:var(--amber)}
+.st .q{float:right;margin-left:8px;font-family:var(--display);color:var(--amber);font-size:1.05rem;white-space:nowrap}
+.st .verb{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--cane)}
+
+.fam-head{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:14px;background:var(--panel2);padding:14px 16px;text-align:left;font-family:var(--display);font-size:1rem;letter-spacing:.02em;color:var(--fg)}
+.fam-head span{flex:1}
+.fam-head b{font-family:var(--body);font-size:.75rem;font-weight:800;padding:2px 8px;border-radius:9px;background:var(--amber);color:var(--amber-ink)}
+.fam-head i{font-style:normal;font-family:var(--body);font-size:1.4rem;line-height:1;color:var(--amber);width:20px;text-align:center}
+.fam-head[aria-expanded="true"]{border-bottom-left-radius:0;border-bottom-right-radius:0;color:var(--amber)}
+.fam-body{display:flex;flex-direction:column;gap:6px;padding:8px;margin-top:-8px;border:1px solid var(--panel2);border-top:0;border-radius:0 0 14px 14px}
+
+.title-big{font-family:var(--display);font-size:1.7rem;line-height:1;color:var(--amber);padding-bottom:10px;border-bottom:2px solid var(--amber)}
+.ask-box{display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:14px;background:var(--panel2);text-align:center}
+.ask-box p{margin:0;font-weight:700;font-size:1.05rem}
+.yn{display:flex;flex-direction:column;gap:8px}
+.yn .btn,.btn.wide{width:100%;padding:14px}
+.link{border:0;background:transparent;color:var(--muted);text-decoration:underline;padding:6px 0;align-self:center}
+#askMore{display:flex;flex-direction:column}
+
+/* Recette */
+.back{align-self:flex-start;border:0;background:transparent;color:var(--amber);font-weight:700;padding:4px 0}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.meta span{padding:4px 10px;border-radius:999px;background:var(--panel2);font-size:.8rem;font-weight:700}
+.shop{list-style:none;margin:0;padding:0}
+.shop li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:.92rem}
+.shop li:last-child{border-bottom:0}
+.shop .sw{width:14px;height:14px;border-radius:50%;flex:none}
+.shop span{flex:1;min-width:0}
+.shop b{white-space:nowrap;font-variant-numeric:tabular-nums}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.st{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:start}
+.st.done{opacity:.45}
+.st .n{width:40px;height:40px;border-radius:50%;border:2px solid var(--amber);display:grid;place-items:center;font-family:var(--display);color:var(--amber);background:transparent;padding:0}
+.st.done .n{background:var(--cane);border-color:var(--cane);color:var(--bg)}
+.st h3{margin:0;font-size:1rem}
+.st p{margin:3px 0 0;font-size:.92rem;color:#E4D6C1}
+.st .alert{margin-top:6px;font-size:.82rem;font-weight:700;color:var(--bad)}
+.st details{margin-top:6px;font-size:.85rem;color:var(--muted)}
+.st summary{cursor:pointer;color:var(--amber);font-weight:600}
+.st details ul{margin:6px 0 0;padding-left:16px}
+.timer{display:flex;align-items:center;gap:10px;margin-top:8px}
+.clock{font-family:var(--display);font-size:1.4rem;font-variant-numeric:tabular-nums}
+footer{font-size:.75rem;color:var(--muted);text-align:center}
+@media (max-width:380px){.two{grid-template-columns:1fr}.hero{grid-template-columns:96px 1fr}.hero svg{width:96px}}
+@media (prefers-reduced-motion: reduce){.lid,.badge i,.pk.r{animation:none!important}}
+
+/* ---- Habillage pirate ---- */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 90px 30px rgba(74,40,10,.55);z-index:20}
+h1{font-size:2.6rem;color:var(--fg);letter-spacing:.02em}
+.kicker{color:var(--amber);font-family:var(--display);font-size:1.05rem;letter-spacing:.06em;text-transform:none}
+.flag{display:flex;align-items:center;gap:12px}
+.flag svg{width:54px;height:54px;flex:none}
+h2,.title-big{letter-spacing:.03em}
+h2{font-size:1.45rem;color:var(--fg)}
+.panel{border:2px solid var(--line);border-radius:6px;background:var(--panel);box-shadow:inset 0 0 28px rgba(120,70,20,.28),0 3px 0 rgba(74,40,10,.25)}
+.title-big{font-size:2.2rem;color:var(--amber);border-bottom:2px dashed var(--line)}
+.go{border-radius:8px;border:3px solid var(--gold);background:var(--amber);color:var(--amber-ink);font-family:var(--display);font-size:1.6rem;letter-spacing:.04em;box-shadow:0 4px 0 #5E160B,inset 0 0 14px rgba(0,0,0,.25)}
+.go:active{transform:translateY(2px);box-shadow:0 2px 0 #5E160B}
+.btn{border-radius:8px;border:2px solid var(--line)}
+.btn.amber{border-color:var(--gold)}
+.huge{font-family:var(--display);font-size:3rem;color:var(--amber)}
+.dial button{border:2px solid var(--line);border-radius:50%;background:var(--panel2)}
+.item{border-radius:8px;border:2px dashed var(--line)}
+.item[aria-pressed="true"]{border-style:solid;border-color:var(--amber);background:var(--panel2)}
+.item .ck{border-color:var(--line)}
+.item[aria-pressed="true"] .ck{background:var(--amber);border-color:var(--gold);color:var(--amber-ink)}
+.seg{background:var(--panel2);border:1px solid var(--line);border-radius:8px}
+.seg button{color:var(--muted);font-weight:700;border-radius:6px}
+.seg button[aria-pressed="true"]{background:var(--amber);color:var(--amber-ink)}
+.fam-head{font-family:var(--display);font-size:1.35rem;border-radius:8px;border:2px solid var(--line);background:var(--panel2);color:var(--fg)}
+.fam-head[aria-expanded="true"]{color:var(--amber)}
+.fam-head b{background:var(--amber);color:var(--amber-ink)}
+.fam-body{border:2px solid var(--line);border-top:0;border-radius:0 0 8px 8px;margin-top:-10px;padding-top:12px}
+.progress button{font-family:var(--display);font-size:.82rem;letter-spacing:0;white-space:nowrap}
+.progress button:last-child{flex:1.25}
+.progress button::before{height:0;border-top:3px dotted var(--line);background:none}
+.progress button[aria-current="step"]::before,.progress button.past::before{border-top:3px dashed var(--amber);background:none}
+.progress button[aria-current="step"]{color:var(--amber)}
+.pk{border-radius:6px;border:1.5px solid var(--line)}
+.ask-box{border:2px dashed var(--line);background:var(--panel2);border-radius:8px}
+.ask-box p{font-family:var(--display);font-size:1.4rem;font-weight:400}
+.custom input{border-radius:8px;border:2px solid var(--line);background:var(--panel)}
+.ticket,.shop li{border-color:var(--line)}
+.shop li.tot{color:var(--amber);font-family:var(--display);font-size:1.15rem;font-weight:400}
+.st{border:2px solid var(--line);border-radius:6px;background:var(--panel);box-shadow:inset 0 0 22px rgba(120,70,20,.22)}
+.st h3{font-family:var(--display);font-weight:400;font-size:1.35rem;letter-spacing:.02em}
+.st p{color:var(--fg)}
+.st .q{font-family:var(--display);font-size:1.4rem;color:var(--amber)}
+.st .verb{color:var(--cane)}
+.st .n{border:2px solid #8A6416;background:radial-gradient(circle at 35% 30%,#F6D77A,#C8962E 60%,#8A6416);color:#3A2408;font-family:var(--display);font-size:1.2rem;box-shadow:0 2px 0 rgba(74,40,10,.4)}
+.st.done .n{background:var(--ok);border-color:var(--ok);color:#fff}
+.clock{font-family:var(--display);font-size:1.8rem}
+.back{font-family:var(--display);font-size:1.15rem;color:var(--amber)}
+footer{font-style:italic}
+.age{justify-content:center}
+.age::before{display:none}
+.age-card{position:relative;background:var(--panel);border:3px solid var(--gold);border-radius:8px;padding:22px 18px;max-width:360px;width:100%;text-align:center;display:flex;flex-direction:column;gap:14px;box-shadow:inset 0 0 28px rgba(120,70,20,.28)}
+.age-card p{margin:0;font-size:1.1rem;font-weight:700}
+.age-card .age-small{font-size:.8rem;font-weight:400;color:var(--muted);font-style:italic}
+.st p.forme{font-size:.88rem}
+.st p.forme b{color:var(--cane)}
+.st details p{margin:4px 0 0;color:var(--fg)}
+.reveal{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:radial-gradient(60% 45% at 50% 42%,#6A3A12 0%,#2A160A 55%,#0E0704 100%);animation:revealBg .5s ease}
+.reveal::before{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;background:linear-gradient(#3A2010,#1C0E06);border-top:2px solid #5A3418;opacity:.9}
+.wrap > .reveal{position:fixed;z-index:50}
+.wrap > .age{z-index:60}
+.reveal-stage{position:relative;flex:1;min-height:0;width:100%;display:flex;justify-content:center;align-items:flex-end}
+.big-bottle{height:100%;max-height:78vh;width:auto;max-width:100%;filter:drop-shadow(0 0 40px rgba(242,165,65,.28));animation:rise .9s cubic-bezier(.2,.8,.2,1)}
+.big-bottle .rum-fill{transform-box:view-box;transform-origin:50% 100%;animation:fill 1.6s .4s cubic-bezier(.3,.7,.2,1) both}
+.big-bottle .label-in{animation:labelIn .6s 1.4s both}
+.reveal-actions{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;width:min(100%,360px)}
+.reveal-back{color:#E6CF9C}
+@keyframes revealBg{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(30px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes fill{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes labelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.big-bottle,.big-bottle .rum-fill,.big-bottle .label-in,.reveal{animation:none!important}}
+.seal{transition:fill .3s} .seal.n{fill:#A01E14} .seal.v{fill:var(--ok)} .seal.o{fill:var(--mid);animation:blink 1.1s ease-in-out infinite} .seal.r{fill:var(--bad);animation:blink .45s steps(2,end) infinite}
+.bottle-svg svg{width:100%;height:100%;display:block}
+.hero{grid-template-columns:110px 1fr}
+.mini-bottle svg{width:110px;height:auto;display:block;filter:drop-shadow(0 4px 6px rgba(60,30,8,.35))}
+@media (prefers-reduced-motion: reduce){.seal{animation:none!important}}
+.bottle{position:relative;width:min(100%,300px);margin:0 auto;aspect-ratio:240/440;max-width:100%}
+.bottle-svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 6px 10px rgba(60,30,8,.35))}
+.bottle-label{position:absolute;left:19%;right:19%;top:46.5%;bottom:11.5%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
+.bl-title{font-family:var(--display);font-size:1.15rem;color:var(--amber);letter-spacing:.04em;line-height:1}
+.bl-row{display:flex;align-items:center;justify-content:space-between;width:100%;gap:4px}
+.bl-val{font-family:var(--display);font-size:2.15rem;line-height:1;color:#2A1A0D;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bl-row button{width:34px;height:34px;flex:none;border-radius:50%;border:2px solid #4A0C06;background:radial-gradient(circle at 35% 30%,#D23A2A,#9E2A17 60%,#6A140B);color:#F7E9C8;font-size:1.3rem;font-weight:900;line-height:1;padding:0;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.bl-row button:active{transform:translateY(1px)}
+.bl-cap{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:-2px}
+.bl-sep{color:#9C7744;font-size:.8rem;letter-spacing:.3em;margin:1px 0}
+.bl-parfum{width:100%;border:2px solid #4A0C06;border-radius:999px;background:radial-gradient(circle at 35% 30%,#D23A2A,#9E2A17 60%,#6A140B);color:#F7E9C8;font-family:var(--display);font-size:1.15rem;letter-spacing:.04em;padding:5px 8px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+.bl-names{font-size:.72rem;font-weight:700;color:var(--muted);line-height:1.2;max-height:2.4em;overflow:hidden}
+.bg-art{position:fixed;z-index:0;pointer-events:none;opacity:.5;width:min(108vw,620px);left:50%;top:50%;transform:translate(-50%,-42%);animation:fadeBg .6s ease}
+.bg-art.p1 svg{transform:rotate(-6deg)}
+.bg-art svg{width:100%;height:auto;display:block}
+@keyframes fadeBg{from{opacity:0}to{opacity:.5}}
+.wrap > *{position:relative;z-index:1}
+.wrap > .bg-art{position:fixed;z-index:0}
+
+.parrot{width:80px;height:auto;flex:none;transform-origin:50% 80%;animation:bob 3.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(4deg) translateY(-2px)}}
+.deco-sabres{display:flex;align-items:center;gap:10px}
+.deco-sabres span{flex:1;border-top:2px dashed var(--line)}
+.deco-sabres svg{width:130px;height:auto}
+.barrels{display:flex;align-items:flex-end;justify-content:center;gap:6px;margin-top:8px}
+.barrels .barrel{width:44px;height:auto}
+.barrels .barrel:nth-child(2){width:34px;margin-left:-14px}
+.barrels footer{flex:1;max-width:220px;padding-bottom:8px}
+@media (prefers-reduced-motion: reduce){.parrot{animation:none}}
+.buy{color:#FF1744;font-weight:900;text-shadow:0 0 6px rgba(255,23,68,.45)}
+.shop small.sub .buy{font-size:.9rem}
+mark.fluo{background:none;color:inherit;font-weight:inherit;padding:0}
+.shop small.sub{display:block;font-size:.78rem;color:var(--muted)}
+.saison-head{background:var(--ok);color:#F7E9C8;border-color:#1E5A27}
+.saison-head[aria-expanded="true"]{color:#F7E9C8}
+.saison-head i{color:#F7E9C8}
+.item .tx .saison{font-size:.75rem;font-weight:700;color:var(--ok)}
+</style>
+
+
+</head><body>
+<div class="wrap">
+  <div class="flag">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><g stroke="#2A1A0D" stroke-width="6" stroke-linecap="round"><path d="M10 50 54 14M10 14l44 36"/></g><g stroke="#F0E0BC" stroke-width="3" stroke-linecap="round"><path d="M10 50 54 14M10 14l44 36"/></g>
+      <path d="M32 8c-11 0-18 7-18 16 0 6 3 10 7 12v6h22v-6c4-2 7-6 7-12 0-9-7-16-18-16z" fill="#F0E0BC" stroke="#2A1A0D" stroke-width="2.5"/>
+      <circle cx="25" cy="25" r="5" fill="#2A1A0D"/><circle cx="39" cy="25" r="5" fill="#2A1A0D"/><path d="M32 30l-3 5h6z" fill="#2A1A0D"/><path d="M26 42v-4M30 42v-4M34 42v-4M38 42v-4" stroke="#2A1A0D" stroke-width="2"/></svg>
+    <div style="flex:1"><h1>Rhum Arrangé</h1></div>
+    <svg class="parrot" viewBox="0 0 70 96" aria-hidden="true">
+ <path d="M30 70 l-6 24 8-4 4 6 3-24z" fill="#1F5FA8" stroke="#2A1A0D" stroke-width="1.5"/>
+ <path d="M34 70 l2 22 6-5 5 3-6-22z" fill="#C0261B" stroke="#2A1A0D" stroke-width="1.5"/>
+ <ellipse cx="36" cy="52" rx="15" ry="22" fill="#2F9E44" stroke="#2A1A0D" stroke-width="2"/>
+ <path d="M26 44c4 10 6 22 4 30 10-4 16-16 14-30z" fill="#1F7A33" stroke="#2A1A0D" stroke-width="1.5"/>
+ <path d="M28 46c3 2 5 6 5 10M30 54c3 2 4 5 4 9" stroke="#F2C230" stroke-width="2" fill="none"/>
+ <circle cx="36" cy="22" r="14" fill="#D7261E" stroke="#2A1A0D" stroke-width="2"/>
+ <path d="M46 18c9 1 13 8 9 15-2-4-6-6-10-5z" fill="#F2C230" stroke="#2A1A0D" stroke-width="2"/>
+ <circle cx="40" cy="18" r="5" fill="#fff" stroke="#2A1A0D" stroke-width="1.5"/><circle cx="41" cy="18" r="2.2" fill="#2A1A0D"/>
+ <path d="M28 10c2-6 8-9 12-7-4 1-6 4-6 7z" fill="#D7261E" stroke="#2A1A0D" stroke-width="1.5"/>
+ <path d="M20 74h34" stroke="#6A402C" stroke-width="5" stroke-linecap="round"/>
+ <path d="M30 72v4M40 72v4" stroke="#F2C230" stroke-width="3" stroke-linecap="round"/></svg>
+  </div>
+  <nav class="progress" id="progress"></nav>
+
+  <!-- Page 1 : la bouteille -->
+  <div id="p1" class="wrap">
+    <div class="bottle">
+      <div class="bottle-svg" id="bottle1"></div>
+      <div class="bottle-label">
+        <div class="bl-title">Rhum Arrangé</div>
+        <div class="bl-row"><button id="volMinus" aria-label="Moins de volume">−</button><span class="bl-val" id="volVal"></span><button id="volPlus" aria-label="Plus de volume">+</button></div>
+        <div class="bl-cap">volume</div>
+        <div class="bl-sep">✦ ☠ ✦</div>
+        <div class="bl-row"><button id="degMinus" aria-label="Moins de degrés">−</button><span class="bl-val" id="degVal"></span><button id="degPlus" aria-label="Plus de degrés">+</button></div>
+        <div class="bl-cap">degré final</div>
+        <div class="bl-sep">✦ ☠ ✦</div>
+        <button class="bl-parfum" id="bottleParfum">Parfums</button>
+        <div class="bl-names" id="blNames"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page 2 : parfums -->
+  <div id="p2" class="wrap" hidden>
+    <div class="panel">
+      <div class="hero"><div id="jar" class="mini-bottle"></div><div id="verdict"></div></div>
+    </div>
+    <div class="panel">
+      <div class="title-big" id="pTitle">Parfums</div>
+      <button class="go" id="pickBtn">Choisis tes parfums</button>
+      <div class="list" id="grid"></div>
+      <div id="customBox" class="list">
+        <div class="custom">
+          <input id="customName" type="text" placeholder="Autre parfum…" autocomplete="off">
+          <button class="btn" id="askBtn">Tester</button>
+        </div>
+      </div>
+      <div class="ask-out" id="askOut" hidden></div>
+      <div id="askMore"></div>
+    </div>
+<div class="deco-sabres" id="sabres2" aria-hidden="true"><span></span><svg viewBox="0 0 120 60">
+ <g stroke="#2A1A0D" stroke-width="1.5">
+  <path d="M18 54 C40 40 70 20 104 6 C80 26 52 44 26 58z" fill="#C9CED3"/>
+  <path d="M102 54 C80 40 50 20 16 6 C40 26 68 44 94 58z" fill="#DADFE3"/>
+  <path d="M12 50l14 12M108 50l-14 12" stroke-width="5" stroke="#C8962E"/>
+  <circle cx="14" cy="60" r="4" fill="#8A6416"/><circle cx="106" cy="60" r="4" fill="#8A6416"/></g></svg><span></span></div>
+    <button class="go" id="toMethod" data-page="3">Choisis ta méthode</button>
+    <button class="back" data-page="1">← La bouteille</button>
+  </div>
+
+  <!-- Page 3 : méthode, rhum et sucre -->
+  <div id="p3" class="wrap" hidden>
+    <div class="panel">
+      <h2>Rhum blanc de départ</h2>
+      <div class="seg" id="rumSeg"></div>
+    </div>
+    <div class="panel">
+      <h2>Méthode</h2>
+      <div class="list" id="methodList"></div>
+    </div>
+    <div class="panel">
+      <h2>Sucre</h2>
+      <div class="list" id="sweetList"></div>
+      <div class="label-sm">Dose</div>
+      <div class="seg" id="sugarSeg"></div>
+    </div>
+    <div class="panel">
+      <h2 id="ticketTitle">Quantités</h2>
+      <ul class="shop" id="ticket"></ul>
+      <div class="warn" id="warn" hidden></div>
+    </div>
+<div class="deco-sabres" aria-hidden="true"><span></span><svg viewBox="0 0 120 60">
+ <g stroke="#2A1A0D" stroke-width="1.5">
+  <path d="M18 54 C40 40 70 20 104 6 C80 26 52 44 26 58z" fill="#C9CED3"/>
+  <path d="M102 54 C80 40 50 20 16 6 C40 26 68 44 94 58z" fill="#DADFE3"/>
+  <path d="M12 50l14 12M108 50l-14 12" stroke-width="5" stroke="#C8962E"/>
+  <circle cx="14" cy="60" r="4" fill="#8A6416"/><circle cx="106" cy="60" r="4" fill="#8A6416"/></g></svg><span></span></div>
+    <button class="go" id="goBtn">Réaliser</button>
+    <button class="back" data-page="2">← Parfums</button>
+  </div>
+
+  <!-- Vérification de l'âge -->
+  <div id="ageGate" class="reveal age" hidden role="dialog" aria-label="Vérification de l'âge">
+    <div class="age-card">
+      <div class="title-big" style="border:0">Halte, matelot !</div>
+      <p id="ageText">Cette appli parle d'alcool. As-tu 18 ans ou plus ?</p>
+      <div class="yn" id="ageBtns"><button class="go" id="ageYes">Oui, j'ai 18 ans ou plus</button><button class="btn" id="ageNo">Non</button></div>
+      <p class="age-small">L'abus d'alcool est dangereux pour la santé. À consommer avec modération.</p>
+    </div>
+  </div>
+
+  <!-- La bouteille finale, plein écran -->
+  <div id="reveal" class="reveal" hidden role="dialog" aria-label="Ta bouteille">
+    <div class="reveal-stage"></div>
+    <div class="reveal-actions">
+      <button class="go" id="revealGo">Voir la recette</button>
+      <button class="link reveal-back" id="revealBack">Modifier</button>
+    </div>
+  </div>
+
+  <!-- Page 4 : réalisation -->
+  <div id="recipe" class="wrap" hidden></div>
+  <div class="barrels"><svg class="barrel" viewBox="0 0 50 60" aria-hidden="true">
+ <path d="M8 6h34c6 16 6 32 0 48H8C2 38 2 22 8 6z" fill="#8A5A2B" stroke="#2A1A0D" stroke-width="2"/>
+ <path d="M17 6c-3 16-3 32 0 48M25 6v48M33 6c3 16 3 32 0 48" stroke="#5E3A1A" stroke-width="1.5" fill="none"/>
+ <path d="M6 15h38M4 30h42M6 45h38" stroke="#3A3A3A" stroke-width="3.5"/>
+ <ellipse cx="25" cy="6" rx="17" ry="3" fill="#A06B36" stroke="#2A1A0D" stroke-width="2"/>
+ <circle cx="25" cy="38" r="2.5" fill="#2A1A0D"/></svg><svg class="barrel" viewBox="0 0 50 60" aria-hidden="true">
+ <path d="M8 6h34c6 16 6 32 0 48H8C2 38 2 22 8 6z" fill="#8A5A2B" stroke="#2A1A0D" stroke-width="2"/>
+ <path d="M17 6c-3 16-3 32 0 48M25 6v48M33 6c3 16 3 32 0 48" stroke="#5E3A1A" stroke-width="1.5" fill="none"/>
+ <path d="M6 15h38M4 30h42M6 45h38" stroke="#3A3A3A" stroke-width="3.5"/>
+ <ellipse cx="25" cy="6" rx="17" ry="3" fill="#A06B36" stroke="#2A1A0D" stroke-width="2"/>
+ <circle cx="25" cy="38" r="2.5" fill="#2A1A0D"/></svg><footer>L'abus d'alcool est dangereux pour la santé.<br>À consommer avec modération.<br><small>Degrés estimés à ± 2°</small></footer><svg class="barrel" viewBox="0 0 50 60" aria-hidden="true">
+ <path d="M8 6h34c6 16 6 32 0 48H8C2 38 2 22 8 6z" fill="#8A5A2B" stroke="#2A1A0D" stroke-width="2"/>
+ <path d="M17 6c-3 16-3 32 0 48M25 6v48M33 6c3 16 3 32 0 48" stroke="#5E3A1A" stroke-width="1.5" fill="none"/>
+ <path d="M6 15h38M4 30h42M6 45h38" stroke="#3A3A3A" stroke-width="3.5"/>
+ <ellipse cx="25" cy="6" rx="17" ry="3" fill="#A06B36" stroke="#2A1A0D" stroke-width="2"/>
+ <circle cx="25" cy="38" r="2.5" fill="#2A1A0D"/></svg></div>
+</div>
+
+<script>
+/* ---------- Données ---------- */
+const FAMS = {AGR:"Agrumes",EXO:"Fruits exotiques",ROU:"Fruits rouges",NOY:"Fruits à noyau",AUT:"Fruits d'automne et fruits secs",EPD:"Épices douces",EPF:"Épices fortes",HER:"Herbes",GOU:"Notes gourmandes",FLO:"Fleurs",BON:"Bonbons",AUTRE:"Autres"};
+
+// qty = pour 1 L de rhum arrangé ; eau = part d'eau (fruits) ; gpu = grammes par pièce ; bm = minutes de bain-marie ; mac = semaines ; ret = jours avant retrait (macération)
+const ING = [
+ {id:"figue",nom:"Figue",rec:"figues fraîches bien mûres",fam:"AUT",fruit:1,qty:450,unit:"g",eau:.8,bm:105,mac:6,prep:"Lave-les, retire la queue et coupe-les en quartiers."},
+ {id:"pomme",nom:"Pomme",rec:"pommes (type reinette)",fam:"AUT",fruit:1,qty:450,unit:"g",eau:.85,bm:165,mac:6,prep:"Épluche, retire le cœur et les pépins, coupe en dés de 2 cm."},
+ {id:"poire",nom:"Poire",rec:"poires mûres mais fermes",fam:"AUT",fruit:1,qty:450,unit:"g",eau:.84,bm:135,mac:5,prep:"Épluche, retire le cœur, coupe en quartiers."},
+ {id:"coing",nom:"Coing",rec:"coings",fam:"AUT",fruit:1,qty:400,unit:"g",eau:.84,bm:180,mac:10,prep:"Frotte le duvet, épluche et coupe en petits dés de 1 cm (fruit très dur)."},
+ {id:"raisinsec",nom:"Raisins secs",rec:"raisins secs",fam:"AUT",fruit:1,qty:150,unit:"g",eau:.15,bm:120,mac:8,prep:"Rince-les rapidement à l'eau tiède et égoutte-les."},
+ {id:"datte",nom:"Datte",rec:"dattes dénoyautées",fam:"AUT",fruit:1,qty:150,unit:"g",eau:.2,bm:120,mac:6,prep:"Dénoyaute et coupe en deux dans la longueur."},
+ {id:"ananas",nom:"Ananas",rec:"ananas (Victoria de préférence)",fam:"EXO",fruit:1,qty:450,unit:"g",eau:.86,bm:165,mac:8,prep:"Épluche, retire le cœur fibreux et coupe en morceaux de 2 cm."},
+ {id:"mangue",nom:"Mangue",rec:"mangue bien mûre",fam:"EXO",fruit:1,qty:400,unit:"g",eau:.83,bm:135,mac:6,prep:"Épluche et coupe la chair en lamelles épaisses autour du noyau."},
+ {id:"passion",nom:"Fruit de la passion",rec:"fruits de la passion",fam:"EXO",fruit:1,qty:6,unit:"pièce",gpu:35,eau:.8,bm:90,mac:4,prep:"Coupe en deux et récupère la pulpe avec les graines à la cuillère."},
+ {id:"banane",nom:"Banane",rec:"bananes mûres (peau tachetée)",fam:"EXO",fruit:1,qty:3,unit:"pièce",gpu:100,eau:.75,bm:75,mac:3,prep:"Épluche et coupe en rondelles de 1 cm."},
+ {id:"coco",nom:"Noix de coco",rec:"noix de coco fraîche",fam:"EXO",fruit:1,qty:150,unit:"g",eau:.45,bm:120,mac:6,prep:"Ouvre la noix, détache la chair et coupe-la en copeaux (tu peux les dorer 5 min à la poêle sans matière grasse)."},
+ {id:"litchi",nom:"Litchi",rec:"litchis frais",fam:"EXO",fruit:1,qty:300,unit:"g",eau:.82,bm:90,mac:4,prep:"Décortique et dénoyaute."},
+ {id:"citronvert",nom:"Citron vert",rec:"citrons verts (zeste seulement)",fam:"AGR",fruit:0,qty:2,unit:"pièce",bm:60,mac:3,ret:14,prep:"Prélève le zeste au couteau éplucheur, sans le blanc (il est amer). Garde les citrons pour autre chose."},
+ {id:"orange",nom:"Orange",rec:"oranges non traitées (zeste seulement)",fam:"AGR",fruit:0,qty:1,unit:"pièce",bm:60,mac:3,ret:21,prep:"Lave l'orange et prélève le zeste en larges bandes, sans le blanc."},
+ {id:"fraise",nom:"Fraise",rec:"fraises",fam:"ROU",fruit:1,qty:400,unit:"g",eau:.9,bm:75,mac:3,prep:"Rince, équeute et coupe en deux."},
+ {id:"framboise",nom:"Framboise",rec:"framboises",fam:"ROU",fruit:1,qty:300,unit:"g",eau:.86,bm:60,mac:3,prep:"Ne les lave pas, trie-les simplement (elles se gorgent d'eau)."},
+ {id:"cerise",nom:"Cerise",rec:"cerises",fam:"ROU",fruit:1,qty:450,unit:"g",eau:.82,bm:105,mac:6,prep:"Équeute et dénoyaute (garde 5 ou 6 noyaux si tu aimes une petite note d'amande)."},
+ {id:"cassis",nom:"Cassis",rec:"grains de cassis",fam:"ROU",fruit:1,qty:300,unit:"g",eau:.8,bm:90,mac:6,prep:"Égrappe et rince rapidement."},
+ {id:"abricot",nom:"Abricot",rec:"abricots",fam:"NOY",fruit:1,qty:450,unit:"g",eau:.86,bm:105,mac:5,prep:"Coupe en deux et dénoyaute."},
+ {id:"peche",nom:"Pêche",rec:"pêches (jaunes ou de vigne)",fam:"NOY",fruit:1,qty:450,unit:"g",eau:.88,bm:90,mac:4,prep:"Pèle si la peau est épaisse, dénoyaute et coupe en quartiers."},
+ {id:"mirabelle",nom:"Mirabelle / prune",rec:"mirabelles ou prunes",fam:"NOY",fruit:1,qty:450,unit:"g",eau:.85,bm:120,mac:6,prep:"Coupe en deux et dénoyaute."},
+ {id:"clementine",nom:"Clémentine",rec:"clémentines",fam:"AGR",fruit:1,qty:450,unit:"g",eau:.87,bm:90,mac:4,prep:"Épluche, sépare les quartiers et garde le zeste d'une clémentine."},
+ {id:"mandarine",nom:"Mandarine",rec:"mandarines",fam:"AGR",fruit:1,qty:450,unit:"g",eau:.86,bm:90,mac:4,prep:"Épluche, sépare les quartiers et garde le zeste d'une mandarine."},
+ {id:"pamplemousse",nom:"Pamplemousse",rec:"pamplemousse rose",fam:"AGR",fruit:1,qty:350,unit:"g",eau:.9,bm:75,mac:3,prep:"Pèle à vif (sans la peau blanche, très amère) et prélève les quartiers sans leurs membranes."},
+ {id:"kiwi",nom:"Kiwi",rec:"kiwis mûrs",fam:"EXO",fruit:1,qty:400,unit:"g",eau:.83,bm:90,mac:4,prep:"Épluche et coupe en rondelles épaisses."},
+ {id:"kaki",nom:"Kaki",rec:"kakis bien mûrs",fam:"AUT",fruit:1,qty:400,unit:"g",eau:.8,bm:120,mac:6,prep:"Retire le pédoncule et coupe en quartiers (il doit être bien mou, sinon il est âpre)."},
+ {id:"myrtille",nom:"Myrtille",rec:"myrtilles",fam:"ROU",fruit:1,qty:300,unit:"g",eau:.85,bm:75,mac:4,prep:"Trie et rince rapidement."},
+ {id:"mure",nom:"Mûre",rec:"mûres",fam:"ROU",fruit:1,qty:300,unit:"g",eau:.88,bm:75,mac:4,prep:"Trie sans les laver si elles sont propres."},
+ {id:"rhubarbe",nom:"Rhubarbe",rec:"rhubarbe",fam:"ROU",fruit:1,qty:350,unit:"g",eau:.94,bm:90,mac:3,prep:"Retire les fils et coupe les tiges en tronçons de 2 cm (jamais les feuilles)."},
+ {id:"caramel",nom:"Caramels mous",rec:"caramels mous (type Carambar)",fam:"BON",bonbon:1,qty:120,unit:"g",bm:90,mac:2,prep:"Déballe-les et coupe-les en deux pour qu'ils fondent plus vite."},
+ {id:"caramdur",nom:"Caramels durs",rec:"caramels durs (type Werther's)",fam:"BON",bonbon:1,qty:120,unit:"g",bm:90,mac:2,prep:"Déballe-les, tu peux les concasser grossièrement dans un torchon."},
+ {id:"acidule",nom:"Bonbons fruités",rec:"bonbons fruités acidulés (type Kréma)",fam:"BON",bonbon:1,qty:120,unit:"g",bm:75,mac:2,prep:"Déballe-les. Une seule couleur donne un rhum plus joli."},
+ {id:"reglisse",nom:"Réglisse",rec:"bonbons à la réglisse (type Zan)",fam:"BON",bonbon:1,qty:60,unit:"g",bm:90,mac:2,prep:"Coupe-les en petits morceaux."},
+ {id:"bmenthe",nom:"Bonbons à la menthe",rec:"bonbons durs à la menthe",fam:"BON",bonbon:1,qty:80,unit:"g",bm:75,mac:2,prep:"Déballe-les et concasse-les grossièrement."},
+ {id:"vanille",nom:"Vanille",rec:"vanille",fam:"EPD",qty:2,unit:"gousse",bm:0,mac:0,prep:"Fends les gousses en deux dans la longueur et gratte les graines, mets graines et gousses."},
+ {id:"cannelle",nom:"Cannelle",rec:"cannelle",fam:"EPD",qty:1,unit:"bâton",bm:0,mac:0,prep:"Mets le bâton entier."},
+ {id:"tonka",nom:"Fève tonka",rec:"tonka",fam:"EPD",qty:.5,unit:"fève",bm:0,mac:0,ret:21,prep:"Entaille la fève au couteau (très puissante, ne force pas la dose)."},
+ {id:"badiane",nom:"Badiane",rec:"badiane (anis étoilé)",fam:"EPD",qty:1,unit:"étoile",bm:0,mac:0,ret:14,prep:"Mets l'étoile entière."},
+ {id:"cardamome",nom:"Cardamome",rec:"cardamome verte",fam:"EPD",qty:4,unit:"gousse",bm:0,mac:0,ret:21,prep:"Écrase légèrement les gousses avec le plat d'un couteau."},
+ {id:"gingembre",nom:"Gingembre",rec:"gingembre frais",fam:"EPF",qty:30,unit:"g",bm:0,mac:0,ret:14,prep:"Épluche à la cuillère et coupe en fines lamelles."},
+ {id:"piment",nom:"Piment",rec:"petit piment (type oiseau)",fam:"EPF",qty:1,unit:"pièce",bm:0,mac:0,ret:5,prep:"Laisse-le entier, sans le fendre (sinon c'est vite brûlant)."},
+ {id:"poivre",nom:"Poivre",rec:"poivre en grains (noir ou Timut)",fam:"EPF",qty:1,unit:"c. à café",bm:0,mac:0,ret:10,prep:"Concasse très légèrement les grains."},
+ {id:"girofle",nom:"Clou de girofle",rec:"girofle",fam:"EPF",qty:2,unit:"clou",bm:0,mac:0,ret:14,prep:"Mets les clous entiers."},
+ {id:"menthe",nom:"Menthe",rec:"menthe fraîche",fam:"HER",qty:18,unit:"feuille",bm:0,mac:0,fin:3,prep:"Rince, sèche, puis froisse bien les feuilles entre tes mains juste avant de les mettre : c'est ce qui libère leur parfum."},
+ {id:"basilic",nom:"Basilic",rec:"basilic frais",fam:"HER",qty:8,unit:"feuille",bm:0,mac:0,ret:3,prep:"Rince, sèche et laisse les feuilles entières."},
+ {id:"citronnelle",nom:"Citronnelle",rec:"citronnelle fraîche",fam:"HER",qty:1,unit:"tige",bm:0,mac:0,ret:14,prep:"Retire les feuilles extérieures et écrase la tige avec le plat d'un couteau."},
+ {id:"verveine",nom:"Verveine",rec:"verveine (fraîche ou séchée)",fam:"HER",qty:10,unit:"feuille",bm:0,mac:0,ret:7,prep:"Mets les feuilles entières."},
+ {id:"romarin",nom:"Romarin",rec:"romarin",fam:"HER",qty:1,unit:"brin",bm:0,mac:0,ret:5,prep:"Rince et sèche le brin."},
+ {id:"cafe",nom:"Café",rec:"café en grains",fam:"GOU",qty:15,unit:"g",bm:0,mac:0,ret:4,prep:"Grains entiers, juste concassés grossièrement (jamais moulus)."},
+ {id:"cacao",nom:"Cacao",rec:"éclats de fèves de cacao (grué)",fam:"GOU",qty:20,unit:"g",bm:0,mac:0,ret:14,prep:"À utiliser tel quel."},
+ {id:"hibiscus",nom:"Hibiscus",rec:"fleurs d'hibiscus séchées (bissap)",fam:"FLO",qty:10,unit:"g",bm:0,mac:0,ret:7,prep:"Rince rapidement les fleurs."},
+ {id:"lavande",nom:"Lavande",rec:"fleurs de lavande séchées (alimentaire)",fam:"FLO",qty:.5,unit:"c. à café",bm:0,mac:0,ret:3,prep:"Mets-les dans une petite boule à thé pour pouvoir les retirer facilement."},
+];
+const SOLO = {
+  piment:["o","Seul, le piment donne un rhum brûlant : associe-le à un fruit (ananas, mangue)."],
+  poivre:["o","Seul, le poivre manque de rondeur : ajoute un fruit."],
+  girofle:["o","Seul, le clou de girofle devient vite médicinal : associe-le à une orange ou une pomme."],
+  lavande:["o","Seule, la lavande peut donner un goût de savon : associe-la à un abricot ou une pêche."],
+  romarin:["o","Seul, le romarin est très herbacé : il marche mieux avec un abricot."],
+  basilic:["o","Seul, le basilic est surprenant : il brille surtout avec la fraise."],
+  badiane:["o","Seule, la badiane donne un goût de pastis : associe-la à un fruit."],
+  girofle2:null
+};
+const FM = {}; // matrice entre familles
+function fm(a,b,v,r){FM[[a,b].sort().join("|")]=[v,r]}
+fm("AGR","AGR","v","Les agrumes se complètent bien.");
+fm("AGR","EXO","v","L'agrume réveille les fruits exotiques.");
+fm("AGR","ROU","o","Deux acidités qui s'additionnent : dose l'agrume légèrement.");
+fm("AGR","NOY","o","Possible, mais l'agrume risque de couvrir le fruit.");
+fm("AGR","AUT","v","Un zeste d'agrume relève bien les fruits d'automne.");
+fm("AGR","EPD","v","Agrumes et épices douces : un classique.");
+fm("AGR","EPF","v","Agrumes et épices fortes se répondent bien.");
+fm("AGR","HER","v","Agrume et herbe fraîche : vif et frais.");
+fm("AGR","GOU","v","Agrume et note gourmande : un contraste réussi.");
+fm("AGR","FLO","o","Fleurs et agrumes : délicat, à doser finement.");
+fm("EXO","EXO","v","Les fruits exotiques s'entendent très bien.");
+fm("EXO","ROU","o","Mélange possible, mais les arômes se brouillent.");
+fm("EXO","NOY","o","Possible, sans être une évidence.");
+fm("EXO","AUT","o","Deux univers différents : le résultat est souvent confus.");
+fm("EXO","EPD","v","Fruits exotiques et épices douces : la base du rhum arrangé réunionnais.");
+fm("EXO","EPF","v","Le piquant relève le sucré des fruits exotiques.");
+fm("EXO","HER","v","Une herbe fraîche apporte de la fraîcheur au fruit exotique.");
+fm("EXO","GOU","v","Fruit exotique et note gourmande : très rond.");
+fm("EXO","FLO","o","Les fleurs se perdent face aux fruits exotiques.");
+fm("ROU","ROU","v","Les fruits rouges se mélangent très bien.");
+fm("ROU","NOY","v","Fruits rouges et fruits à noyau : harmonieux.");
+fm("ROU","AUT","o","Possible, mais ce n'est pas l'association la plus parlante.");
+fm("ROU","EPD","v","Fruits rouges et épices douces : doux et rond.");
+fm("ROU","EPF","o","Les fruits rouges sont fragiles, l'épice forte peut les écraser.");
+fm("ROU","HER","v","Fruits rouges et herbe fraîche : frais et parfumé.");
+fm("ROU","GOU","v","Fruits rouges et cacao : façon forêt-noire.");
+fm("ROU","FLO","v","Fruits rouges et fleurs : élégant.");
+fm("NOY","NOY","v","Les fruits à noyau s'accordent bien.");
+fm("NOY","AUT","v","Fruits à noyau et fruits d'automne : très cohérent.");
+fm("NOY","EPD","v","Fruits à noyau et épices douces : un classique.");
+fm("NOY","EPF","o","L'épice forte risque de masquer le fruit.");
+fm("NOY","HER","o","Possible avec une herbe douce, à doser légèrement.");
+fm("NOY","GOU","o","La note gourmande prend le dessus sur le fruit.");
+fm("NOY","FLO","v","Fruits à noyau et fleurs : délicat et réussi.");
+fm("AUT","AUT","v","Les fruits d'automne vont bien ensemble.");
+fm("AUT","EPD","v","Fruits d'automne et épices douces : le grand classique d'hiver.");
+fm("AUT","EPF","v","Fruits d'automne et épices chaudes : réconfortant.");
+fm("AUT","HER","o","Peu courant, à tenter en petite quantité.");
+fm("AUT","GOU","v","Fruits d'automne et notes gourmandes : rond et chaleureux.");
+fm("AUT","FLO","o","Peu courant : les fleurs se perdent.");
+fm("EPD","EPD","v","Les épices douces se complètent.");
+fm("EPD","EPF","v","Épices douces et épices fortes : bel équilibre.");
+fm("EPD","HER","o","Possible, mais l'herbe peut sembler hors sujet.");
+fm("EPD","GOU","v","Épices douces et note gourmande : très rond.");
+fm("EPD","FLO","o","Délicat, à doser finement.");
+fm("EPF","EPF","o","Trop de piquant : garde une seule épice forte.");
+fm("EPF","HER","o","Possible, mais l'ensemble devient agressif.");
+fm("EPF","GOU","v","Épice forte et note gourmande : un contraste qui marche.");
+fm("EPF","FLO","r","L'épice forte écrase complètement les fleurs.");
+fm("HER","HER","o","Deux herbes se battent : gardes-en une seule.");
+fm("HER","GOU","r","Herbe fraîche avec café ou cacao : goût d'herbe amère, à éviter.");
+fm("HER","FLO","r","Herbe et fleur ensemble : goût de tisane ou de savon.");
+fm("GOU","GOU","v","Les notes gourmandes se marient bien.");
+fm("GOU","FLO","r","Fleurs avec café ou cacao : goût de parfum, à éviter.");
+fm("FLO","FLO","o","Deux fleurs : risque de goût de savon.");
+fm("BON","BON","v","Les bonbons se mélangent bien entre eux.");
+fm("BON","AGR","o","Possible, mais le bonbon domine souvent l'agrume.");
+fm("BON","EXO","o","Le bonbon prend le dessus sur le fruit.");
+fm("BON","ROU","o","Le bonbon prend le dessus sur le fruit.");
+fm("BON","NOY","o","Le bonbon prend le dessus sur le fruit.");
+fm("BON","AUT","o","Possible, le bonbon reste dominant.");
+fm("BON","EPD","v","Bonbon et épice douce : très gourmand.");
+fm("BON","EPF","o","Sucré et piquant : à doser finement.");
+fm("BON","HER","o","Herbe fraîche et bonbon : peu convaincant.");
+fm("BON","GOU","v","Bonbon et note gourmande : très rond.");
+fm("BON","FLO","o","Fleur et bonbon : vite écœurant.");
+
+const OV = {}; // associations précises
+function ov(a,b,v,r){OV[[a,b].sort().join("|")]=[v,r]}
+ov("figue","cannelle","v","Figue et cannelle : ta recette de base, un accord sûr.");
+ov("menthe","cacao","v","Menthe et cacao : l'accord after-eight, ça marche.");
+ov("menthe","cafe","r","Menthe et café : amer et désagréable.");
+ov("menthe","citronvert","v","Menthe et citron vert : esprit mojito.");
+ov("basilic","fraise","v","Fraise et basilic : un accord de chef.");
+ov("romarin","abricot","v","Abricot et romarin : surprenant et très réussi.");
+ov("lavande","abricot","v","Abricot et lavande : un classique provençal.");
+ov("hibiscus","gingembre","v","Hibiscus et gingembre : façon bissap, très bon.");
+ov("hibiscus","ananas","v","Hibiscus et ananas : acidulé et fruité.");
+ov("mangue","piment","v","Mangue et piment : sucré-piquant réussi.");
+ov("ananas","piment","v","Ananas et piment : un grand classique antillais.");
+ov("ananas","gingembre","v","Ananas et gingembre : frais et piquant.");
+ov("ananas","vanille","v","Ananas et vanille : le roi des rhums arrangés.");
+ov("ananas","coco","v","Ananas et coco : façon piña colada.");
+ov("ananas","romarin","o","Romarin et ananas : l'herbe sonne faux face au fruit exotique.");
+ov("banane","cafe","v","Banane et café : rond et gourmand.");
+ov("banane","vanille","v","Banane et vanille : très doux, un classique.");
+ov("banane","piment","r","Le piment écrase complètement la banane.");
+ov("banane","basilic","o","Basilic et banane : peu convaincant.");
+ov("poire","vanille","v","Poire et vanille : une valeur sûre.");
+ov("pomme","cannelle","v","Pomme et cannelle : façon tarte aux pommes.");
+ov("passion","vanille","v","Passion et vanille : acidulé et gourmand, excellent.");
+ov("cafe","vanille","v","Café et vanille : très gourmand.");
+ov("cacao","orange","v","Orange et cacao : un accord incontournable.");
+ov("cerise","cacao","v","Cerise et cacao : façon forêt-noire.");
+ov("framboise","cacao","v","Framboise et cacao : très gourmand.");
+ov("cassis","vanille","v","Cassis et vanille : riche et rond.");
+ov("coing","vanille","v","Coing et vanille : parfumé, un régal d'hiver.");
+ov("citronnelle","gingembre","v","Citronnelle et gingembre : frais, esprit thaï.");
+ov("citronnelle","coco","v","Coco et citronnelle : très parfumé.");
+ov("citronvert","gingembre","v","Citron vert et gingembre : frais et vif.");
+ov("cafe","citronvert","r","Café et citron vert : acide et amer à la fois.");
+ov("cafe","fraise","o","Café et fraise : la fraise disparaît derrière le café.");
+ov("poivre","fraise","v","Fraise et poivre : un accord connu en pâtisserie.");
+ov("poivre","ananas","v","Ananas et poivre : relevé et fruité.");
+ov("cacao","piment","v","Cacao et piment : façon chocolat aztèque.");
+ov("girofle","orange","v","Orange et clou de girofle : un classique de Noël.");
+ov("figue","cafe","o","Figue et café : possible, le café domine vite.");
+ov("datte","vanille","v","Datte et vanille : très doux.");
+
+
+/* Saisons en France (mois 1-12) ; les fruits importés toute l'année n'y figurent pas */
+const SAISON={figue:[8,9,10],pomme:[9,10,11,12,1,2,3],poire:[8,9,10,11,12,1],coing:[10,11],kaki:[10,11,12],
+ clementine:[11,12,1,2],mandarine:[12,1,2],pamplemousse:[12,1,2,3,4],orange:[12,1,2,3],kiwi:[11,12,1,2,3],litchi:[11,12,1],mangue:[4,5,6],
+ fraise:[4,5,6,7],framboise:[6,7,8,9],cerise:[5,6,7],cassis:[7,8],myrtille:[7,8,9],mure:[8,9],rhubarbe:[4,5,6],
+ abricot:[6,7,8],peche:[6,7,8,9],mirabelle:[8,9]};
+const MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const NOW_M=new Date().getMonth()+1;
+const enSaison=id=>(SAISON[id]||[]).includes(NOW_M);
+
+/* Rendement : part du fruit entier qui reste une fois préparé (épluché, dénoyauté…) */
+const YIELD={figue:.95,pomme:.8,poire:.8,coing:.75,datte:.85,ananas:.55,mangue:.65,coco:.35,litchi:.6,fraise:.93,cerise:.88,cassis:.95,
+ abricot:.92,peche:.85,mirabelle:.9,clementine:.75,mandarine:.75,pamplemousse:.55,kiwi:.85,kaki:.85,rhubarbe:.85};
+
+/* Sous quelle forme mettre chaque parfum, et les variantes possibles : [forme, variantes] */
+const FORME={
+ cafe:["Grains torréfiés entiers, juste concassés.","Jamais de café moulu ni soluble : le rhum devient trouble et amer. Arabica pour la douceur, robusta pour plus de corps."],
+ cacao:["Éclats de fèves de cacao torréfiées (grué).","Fèves entières concassées : même dose. Cacao en poudre : déconseillé, il trouble le rhum et fait un dépôt. Chocolat : jamais, le gras rancit."],
+ vanille:["Gousses entières, fendues et grattées (Bourbon de Madagascar ou de La Réunion).","Vanille de Tahiti : plus florale. Poudre de vanille pure : ½ c. à café par gousse, mais le rhum sera trouble. Arôme ou extrait : à éviter."],
+ cannelle:["Bâton entier, de préférence cannelle de Ceylan (plus douce).","Cannelle Cassia : plus forte, prends ½ bâton. Poudre : à éviter, elle fait un dépôt."],
+ tonka:["Fève entière entaillée au couteau.","Râpée : ¼ de fève suffit, elle est très puissante."],
+ badiane:["Étoile entière.","Graines d'anis vert : ½ c. à café, goût plus léger."],
+ cardamome:["Gousses vertes légèrement écrasées.","Graines seules : ¼ c. à café. Cardamome noire : goût fumé, 1 gousse suffit."],
+ gingembre:["Racine fraîche, épluchée, en fines lamelles.","Gingembre confit : 40 g, plus doux (mets un peu moins de sucre). Séché en morceaux : 10 g. Poudre : à éviter."],
+ piment:["Petit piment frais, entier et non fendu.","Séché entier : même usage, goût plus fumé. Fendu : bien plus fort, retire-le après 1 à 2 jours. Poudre : à éviter."],
+ poivre:["Grains entiers, à peine concassés.","Timut : notes de pamplemousse. Poivre long : plus chaud. Baies roses : plus douces. Poivre moulu : à éviter."],
+ girofle:["Clous entiers.","Jamais en poudre : goût médicinal et dépôt."],
+ menthe:["Feuilles fraîches, ajoutées seulement pour les 2 à 3 derniers jours.","Menthe poivrée : bien plus puissante que la menthe verte, idéale avec du citron vert ou du piment. Menthe séchée : 1 c. à café, goût plus tisane. Au-delà de 3 ou 4 jours, la menthe devient amère."],
+ basilic:["Feuilles fraîches.","Basilic thaï : notes anisées. Séché : à éviter."],
+ citronnelle:["Tige fraîche écrasée.","Séchée : 1 c. à soupe."],
+ verveine:["Feuilles fraîches ou séchées.","Séchée : environ 2 g."],
+ romarin:["Brin frais.","Séché : ½ c. à café."],
+ hibiscus:["Fleurs séchées entières (bissap).","Sachets d'infusion : à éviter, ils contiennent de la poudre. L'hibiscus donne une belle couleur rouge."],
+ lavande:["Fleurs séchées de qualité alimentaire, dans une boule à thé.","Lavande d'ornement ou traitée : jamais."],
+ coco:["Chair fraîche en copeaux.","Noix de coco râpée séchée, non sucrée : 80 g, dorée à la poêle. Lait ou crème de coco : jamais, le gras rancit."],
+ raisinsec:["Raisins secs entiers.","Raisins de Corinthe ou golden : même dose."],
+ datte:["Dattes entières dénoyautées.","Medjool : plus moelleuses et plus sucrées, mets un peu moins de sucre."],
+ figue:["Figues fraîches bien mûres.","Figues sèches : 200 g, goût plus confit. Idéal hors saison."],
+ abricot:["Abricots frais.","Abricots secs : 200 g, goût plus intense."],
+ pomme:["Pommes fraîches.","Pommes séchées : 120 g."],
+ poire:["Poires fraîches.","Poires séchées : 120 g."],
+ ananas:["Ananas frais, Victoria ou Pain de sucre.","Ananas séché : 120 g. En boîte : à éviter (sirop et goût de conserve)."],
+ mangue:["Mangue fraîche bien mûre.","Mangue séchée : 120 g."],
+ banane:["Bananes fraîches mûres.","Bananes séchées : 100 g, goût plus caramel."],
+ passion:["Pulpe fraîche avec les graines.","Pulpe surgelée sans sucre : 200 g."],
+ citronvert:["Zeste frais, sans le blanc.","Combava : un seul zeste suffit, très parfumé."],
+ orange:["Zeste frais, sans le blanc.","Zeste d'orange séché : 1 c. à soupe. Orange sanguine : plus fruitée."],
+ fraise:["Fraises fraîches.","Surgelés : même dose, décongelés et égouttés. Parfait hors saison."],
+ framboise:["Framboises fraîches.","Surgelés : même dose, décongelés et égouttés. Parfait hors saison."],
+ cerise:["Cerises fraîches.","Surgelés : même dose, décongelés et égouttés. Parfait hors saison. Griottes : plus acidulées."],
+ cassis:["Grains frais.","Surgelés : même dose, décongelés et égouttés. Parfait hors saison."],
+ myrtille:["Myrtilles fraîches.","Surgelés : même dose, décongelés et égouttés. Parfait hors saison."],
+ mure:["Mûres fraîches.","Surgelés : même dose, décongelés et égouttés. Parfait hors saison."],
+};
+
+Object.assign(FORME,{
+ caramel:["Caramels entiers, déballés.","Caramels au beurre salé : délicieux, mais filtre bien à la fin. Bonbons gélifiés (type Haribo) : à éviter, ils troublent le rhum."],
+ caramdur:["Caramels durs entiers ou concassés.","Caramels au beurre salé : même dose."],
+ acidule:["Bonbons durs ou mous fruités.","Sucres d'orge : même dose. Bonbons gélifiés : à éviter."],
+ reglisse:["Bonbons à la réglisse, en morceaux.","Bâton de réglisse naturelle : 1 bâton fendu, goût moins sucré."],
+ bmenthe:["Bonbons durs à la menthe, concassés.","Pastilles à la menthe forte : 60 g suffisent."]
+});
+
+ov("caramel","banane","v","Caramel et banane : un dessert en bouteille.");
+ov("caramel","pomme","v","Caramel et pomme : façon pomme d'amour.");
+ov("caramel","poire","v","Caramel et poire : très gourmand.");
+ov("caramdur","pomme","v","Caramel et pomme : façon pomme d'amour.");
+ov("caramdur","banane","v","Caramel et banane : un dessert en bouteille.");
+ov("bmenthe","citronvert","v","Menthe et citron vert : esprit mojito, et la menthe ressort bien.");
+ov("bmenthe","cacao","v","Menthe et cacao : façon after-eight.");
+ov("reglisse","orange","v","Réglisse et orange : surprenant et réussi.");
+
+const COL={caramel:"#C68A3A",caramdur:"#D9A441",acidule:"#E2363F",reglisse:"#1E1A18",bmenthe:"#8FD3C8",mandarine:"#F7931E",pamplemousse:"#F49A8C",clementine:"#F59A2E",kiwi:"#8DB33A",kaki:"#E0711C",myrtille:"#3B3F8C",mure:"#3A1F45",rhubarbe:"#C8455B",figue:"#7B3F61",pomme:"#C9D86B",poire:"#D8C76A",coing:"#E2B93B",raisinsec:"#6A402C",datte:"#8A5A2B",ananas:"#F2C230",mangue:"#F39C2A",passion:"#8E5C9E",banane:"#F5DD6A",coco:"#F3EEE3",litchi:"#F2C9C9",citronvert:"#7DBB3C",orange:"#F28C28",fraise:"#E2363F",framboise:"#D23C6B",cerise:"#9E1B32",cassis:"#4A2457",abricot:"#F2A541",peche:"#F7B989",mirabelle:"#E8C547",vanille:"#4A3020",cannelle:"#9C5B2E",tonka:"#5A3A26",badiane:"#7A4428",cardamome:"#8DAA5A",gingembre:"#E6C27A",piment:"#D7261E",poivre:"#555",girofle:"#6B3A22",menthe:"#3FA34D",basilic:"#2E8B3A",citronnelle:"#B9D36C",verveine:"#8FBF5A",romarin:"#5E7D4E",cafe:"#4A2C1A",cacao:"#6A3B28",hibiscus:"#B0193F",lavande:"#9C8AD0"};
+const colOf=id=>COL[id]||"#C9A27A";
+
+/* ---------- État ---------- */
+const S={sel:["figue","cannelle"],custom:{},method:"bm",vol:1,deg:35,rum:55,sugar:10,sweet:"sirop",tab:"AUT",page:1};
+try{const s=JSON.parse(localStorage.getItem("rhum-atelier")||"null"); if(s&&Array.isArray(s.sel)) Object.assign(S,s);}catch(e){}
+const save=()=>{try{localStorage.setItem("rhum-atelier",JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const get=id=>ING.find(i=>i.id===id)||S.custom[id];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const RANK={v:0,o:1,r:2}; const worst=(a,b)=>RANK[a]>=RANK[b]?a:b;
+const fr=n=>String(n).replace(".",",");
+
+/* ---------- Accords ---------- */
+function pairVerdict(a,b){
+  const A=get(a),B=get(b);
+  if(A.custom||B.custom){
+    const c=A.custom?A:B,o=A.custom?B:A;
+    if(c.verdict==="r") return ["r",`${c.nom} : ${c.raison}`];
+    const f=FM[[c.fam,o.fam].sort().join("|")];
+    return f?[worst(f[0],c.verdict),`${c.nom} + ${o.nom.toLowerCase()} : ${f[1]}`]:[c.verdict,`${c.nom} : ${c.raison}`];
+  }
+  const k=[a,b].sort().join("|"); if(OV[k]) return OV[k];
+  const f=FM[[A.fam,B.fam].sort().join("|")];
+  return f?[f[0],`${A.nom} + ${B.nom.toLowerCase()} : ${f[1]}`]:["o","Association inhabituelle."];
+}
+function evaluate(){
+  const per={},notes=[]; S.sel.forEach(id=>per[id]="v");
+  if(!S.sel.length) return {overall:null,per,notes};
+  S.sel.forEach(id=>{const it=get(id); if(it.custom){per[id]=it.verdict; if(S.sel.length===1||it.verdict==="r") notes.push([it.verdict,`${it.nom} : ${it.raison}`]);}});
+  if(S.sel.length===1){const id=S.sel[0],it=get(id); if(!it.custom) notes.push(SOLO[id]||["v",`${it.nom} seul : une valeur sûre.`]); if(SOLO[id]) per[id]=SOLO[id][0];}
+  for(let i=0;i<S.sel.length;i++)for(let j=i+1;j<S.sel.length;j++){
+    const a=S.sel[i],b=S.sel[j],[v,r]=pairVerdict(a,b);
+    per[a]=worst(per[a],v);per[b]=worst(per[b],v); if(!notes.some(n=>n[1]===r)) notes.push([v,r]);
+  }
+  if(S.sel.length>=5) notes.push(["o","Plus de 4 parfums : on ne reconnaît plus rien."]);
+  if(S.sel.filter(id=>get(id).fam==="EPF").length>=3) notes.push(["o","Trop d'épices fortes : rhum agressif."]);
+  if(S.sel.length>1&&!S.sel.some(id=>get(id).fruit||get(id).fam==="AGR")) notes.push(["o","Sans fruit, le rhum manquera de rondeur."]);
+  let overall="v"; notes.forEach(n=>overall=worst(overall,n[0]));
+  notes.sort((x,y)=>RANK[y[0]]-RANK[x[0]]);
+  return {overall,per,notes};
+}
+
+/* ---------- Calculs ---------- */
+function fmtNum(n){const r=Math.round(n*2)/2,w=Math.floor(r),h=r-w>0; return !w?"½":h?`${w} ½`:`${w}`;}
+const PLUR={"pièce":"pièces","gousse":"gousses","bâton":"bâtons","étoile":"étoiles","clou":"clous","feuille":"feuilles","tige":"tiges","brin":"brins","fève":"fèves"};
+const cl=ml=>`${Math.round(ml/10)} cl`;
+const SWEET={
+  sirop:{t:"Canadou",nom:"Sirop de canne liquide (Canadou)",ajout:"1 à 2 cl de sirop"},
+  poudre:{t:"Poudre",nom:"Sucre de canne blond en poudre",ajout:"1 à 2 c. à soupe de sucre"},
+  miel:{t:"Miel",nom:"Miel liquide doux (acacia)",ajout:"1 c. à soupe de miel"}
+};
+/* 10 cl de sirop ≈ 86 g de sucre ≈ 7 cl de miel */
+function sweetness(ml){
+  if(!ml) return {amount:"",dil:0,none:true};
+  if(S.sweet==="poudre"){const g=Math.max(5,Math.round(ml*.86/5)*5); return {amount:`${g} g`,dil:g*.63};}
+  if(S.sweet==="miel"){const cs=Math.max(.5,Math.round(ml*.7/15*2)/2); return {amount:`${fmtNum(cs)} c. à soupe`,dil:cs*15};}
+  const v=Math.round(ml/10)*10; return {amount:cl(v),dil:v};
+}
+/* L'eau s'ajoute APRÈS filtrage : on macère avec rhum + sucre, puis on dilue jusqu'au degré voulu.
+   Degré du jus filtré c = rhum·d / (rhum + sucre + eau des fruits) ; volume filtré ≈ rhum + sucre ;
+   on cherche le rhum tel que c·(rhum+sucre) = T·V (volume final V). */
+function quantities(){
+  const L=S.vol, fruitIds=S.sel.filter(id=>get(id).fruit), share=fruitIds.length<=1?1:1.15/fruitIds.length;
+  let fw=0,fm=0;
+  const items=S.sel.map(id=>{
+    const it=get(id); let q=it.qty*L*(it.fruit?share:1),mass=0,label;
+    if(it.unit==="g"){q=q<100?Math.max(5,Math.round(q/5)*5):Math.round(q/10)*10;mass=q;label=`${q} g`;}
+    else{q=Math.max(.5,Math.round(q*2)/2);label=`${fmtNum(q)} ${q>1&&PLUR[it.unit]?PLUR[it.unit]:it.unit}`;mass=it.gpu?q*it.gpu:0;}
+    if(it.fruit){fw+=mass*(it.eau||0);fm+=mass;}
+    const y=YIELD[id]; const buy=(it.fruit&&it.unit==="g")?(y?Math.round(q/y/10)*10:q):0;
+    return {id,it,label,buy,prepared:it.fruit&&it.unit==="g"};
+  });
+  const V=L*1000,sw=sweetness(S.sugar*L*10),d=S.rum,T=S.deg,dil=sw.dil+items.reduce((t,x)=>t+(x.it.bonbon?parseInt(x.label)*.63:0),0);
+  const outDeg=r=>r*d/(r+dil+fw);          // degré après macération
+  const finalOf=r=>outDeg(r)*(r+dil)/V;     // degré une fois complété à V avec de l'eau
+  let rum, warn=null, maxR=V-dil;
+  if(finalOf(maxR)<T){rum=maxR;}
+  else{let lo=0,hi=maxR;for(let k=0;k<40;k++){const m=(lo+hi)/2; finalOf(m)<T?lo=m:hi=m;} rum=hi;}
+  rum=Math.round(rum/10)*10;
+  const before=outDeg(rum), water=Math.max(0,Math.round((V-rum-dil)/10)*10);
+  const final=Math.round(before*(rum+dil)/(rum+dil+water));
+  if(final<T-1) warn=`Maximum possible : ${final}°. Prends un rhum plus fort ou moins de sucre.`;
+  const jarNeed=(rum+dil+fm*.9)*1.1/1000;
+  return {items,rum,water,sugar:sw,final,before:Math.round(before),warn,jarNeed};
+}
+function timings(){
+  const its=S.sel.map(get);
+  return {bm:Math.max(60,...its.map(i=>i.bm||0)), mac:Math.max(its.some(i=>i.fruit)?3:4,...its.map(i=>i.mac||0))};
+}
+function hm(min){const h=Math.floor(min/60),m=min%60; return h?(m?`${h} h ${String(m).padStart(2,"0")}`:`${h} h`):`${m} min`;}
+
+/* ---------- Bocal SVG ---------- */
+function jarSVG(sel,verdict){
+  let seed=7; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  const blobs=[];
+  sel.forEach((id,idx)=>{const it=get(id); const n=it.fruit?6:2; seed=11+idx*37;
+    for(let k=0;k<n;k++){const r=it.fruit?9+rnd()*5:5+rnd()*2; blobs.push(`<circle cx="${(30+rnd()*60).toFixed(1)}" cy="${(80+rnd()*68).toFixed(1)}" r="${r.toFixed(1)}" fill="${colOf(id)}" opacity=".95"/>`);}});
+  return `<svg viewBox="0 0 120 170" role="img" aria-label="Bocal">
+   <defs><linearGradient id="rh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7C46A" stop-opacity=".55"/><stop offset="1" stop-color="#C9711E" stop-opacity=".85"/></linearGradient>
+   <clipPath id="cp"><rect x="17" y="46" width="86" height="114" rx="16"/></clipPath></defs>
+   <rect class="lid ${verdict||"n"}" x="22" y="14" width="76" height="22" rx="6"/>
+   <rect x="26" y="34" width="68" height="10" rx="3" fill="#5A4836"/>
+   <rect x="14" y="42" width="92" height="122" rx="19" fill="#ffffff10" stroke="#5A3A1C" stroke-opacity=".8" stroke-width="2.5"/>
+   <g clip-path="url(#cp)"><rect x="10" y="62" width="100" height="110" fill="url(#rh)"/>${blobs.join("")}
+     <rect x="10" y="62" width="100" height="3" fill="#FFE2A8" opacity=".6"/></g>
+   <rect x="24" y="52" width="6" height="90" rx="3" fill="#fff" opacity=".18"/></svg>`;
+}
+
+
+/* Décors de fond, un par page : carte au trésor, coffre, bateau */
+const INK='stroke="#4A2A10" fill="none" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"';
+const BG_ART={
+1:`<svg viewBox="0 0 400 400"><g ${INK}>
+ <path d="M30 60 Q60 40 90 62 T150 58 T210 64 T270 56 T330 62 Q365 58 372 80 L366 330 Q340 352 300 336 T230 342 T160 334 T90 344 Q50 350 34 330 Z"/>
+ <path d="M80 110 q30-30 70-10 q25 12 20 40 q-6 30-46 34 q-40 4-52-24 q-8-22 8-40z"/>
+ <path d="M240 210 q40-26 80 0 q20 18 4 46 q-22 30-64 22 q-40-8-38-36 q2-20 18-32z"/>
+ <path d="M150 150 C190 170 170 210 210 220 S250 240 262 236" stroke-dasharray="2 12" stroke-width="5"/>
+ <path d="M272 224l22 22M294 224l-22 22" stroke="#9E2A17" stroke-width="7"/>
+ <path d="M110 108v-22M110 86q-14-4-22 6M110 86q14-6 22 4M110 86q-4-14-16-16M110 86q6-14 18-14"/>
+ <circle cx="100" cy="270" r="34"/><path d="M100 226v88M56 270h88M100 236l8 34-8 34-8-34zM66 270l34-8 34 8-34 8z"/>
+ <text x="96" y="222" font-size="18" fill="#4A2A10" stroke="none" font-family="serif">N</text>
+ <path d="M300 100q12-10 24 0t24 0M290 124q12-10 24 0t24 0"/></g></svg>`,
+2:`<svg viewBox="0 0 400 400"><g ${INK}>
+ <path d="M70 200h260v130H70z"/><path d="M70 200 Q80 120 200 110 Q320 120 330 200"/>
+ <path d="M70 200 L50 120 Q120 60 230 70 L330 200" stroke-dasharray="0"/>
+ <path d="M70 240h260M70 290h260M120 200v130M280 200v130M120 200 Q125 140 200 132M280 200 Q275 140 200 132"/>
+ <rect x="185" y="215" width="30" height="36" rx="4"/><circle cx="200" cy="230" r="5"/><path d="M200 235v10"/>
+ <g stroke="#B8862B"><circle cx="150" cy="190" r="14"/><circle cx="178" cy="182" r="14"/><circle cx="210" cy="186" r="14"/><circle cx="240" cy="180" r="14"/><circle cx="262" cy="192" r="14"/>
+ <circle cx="194" cy="166" r="14"/><circle cx="226" cy="160" r="14"/><circle cx="60" cy="350" r="12"/><circle cx="345" cy="352" r="12"/><circle cx="330" cy="365" r="12"/></g>
+ <path d="M168 150l10-14 10 14-10 12z" stroke="#9E2A17"/><path d="M240 140l12-10 10 12-12 12z" stroke="#1F5FA8"/>
+ <path d="M30 370h340"/></g></svg>`,
+3:`<svg viewBox="0 0 400 400"><g ${INK}>
+ <path d="M50 250h300l-30 60H90z"/><path d="M80 250l-14-26h70M330 250l20-34h-60"/>
+ <path d="M130 250V60M210 250V40M290 250V90"/>
+ <path d="M100 80q30 20 60 0v60q-30 16-60 0zM96 150q34 22 68 0v70q-34 14-68 0z"/>
+ <path d="M176 60q34 20 68 0v70q-34 16-68 0zM172 140q38 24 76 0v80q-38 14-76 0z"/>
+ <path d="M264 110q26 16 52 0v50q-26 12-52 0zM262 170q28 18 56 0v52q-28 12-56 0z"/>
+ <path d="M210 40l34 10-34 10" fill="#4A2A10"/>
+ <circle cx="150" cy="275" r="6"/><circle cx="200" cy="275" r="6"/><circle cx="250" cy="275" r="6"/>
+ <path d="M20 330q20-14 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0 40 0M40 360q20-14 40 0t40 0 40 0 40 0 40 0 40 0 40 0 40 0"/></g></svg>`};
+function setBg(n){const b=$("bgArt"); if(!b) return; b.innerHTML=BG_ART[n]||""; b.className="bg-art p"+n;}
+/* ---------- Bouteille et dessins des parfums ---------- */
+const SHAPE={caramel:"candy",caramdur:"candy",acidule:"candy",reglisse:"licorice",bmenthe:"candy",pomme:"round",mirabelle:"round",abricot:"round",peche:"round",kaki:"round",coing:"round",litchi:"litchi",
+ citronvert:"citrus",orange:"citrus",clementine:"citrus",mandarine:"citrus",pamplemousse:"citrus",poire:"pear",figue:"fig",banane:"banana",ananas:"pineapple",
+ mangue:"mango",passion:"passion",kiwi:"kiwi",coco:"coco",framboise:"berry",cassis:"berry",myrtille:"berry",mure:"berry",
+ raisinsec:"berry",fraise:"strawberry",cerise:"cherry",rhubarbe:"rhubarb",datte:"date",cannelle:"stick",vanille:"pod",
+ badiane:"star",cardamome:"seeds",poivre:"pepper",tonka:"date",girofle:"clove",piment:"chili",gingembre:"ginger",
+ menthe:"leaf",basilic:"leaf",verveine:"leaf",romarin:"sprig",citronnelle:"stalk",cafe:"bean",cacao:"bean",hibiscus:"flower",lavande:"lavender"};
+const K='stroke="#1E0E04" stroke-width="1.6" stroke-linejoin="round"';
+const LEAF='<path d="M1-10q7-6 10 0-6 3-10 0z" fill="#3FA34D" '+K+'/>';
+function icon(id){
+  const c=colOf(id), sh=SHAPE[id]||"round";
+  switch(sh){
+    case "round": return `<circle r="10" fill="${c}" ${K}/><path d="M0-10v-4" stroke="#5A3A1C" stroke-width="2"/>${LEAF}<circle cx="-4" cy="-3" r="2.5" fill="#fff" opacity=".35"/>`;
+    case "litchi": return `<circle r="9" fill="${c}" ${K}/><circle r="9" fill="none" stroke="#B5524E" stroke-width="1" stroke-dasharray="1.5 2"/>`;
+    case "citrus": return `<circle r="11" fill="${c}" ${K}/><circle r="8" fill="#FFF3C4" opacity=".8"/><path d="M0-8v16M-8 0h16M-5.6-5.6l11.2 11.2M5.6-5.6l-11.2 11.2" stroke="${c}" stroke-width="1.6"/>`;
+    case "pear": return `<path d="M0-12c4 0 4 6 6 10 5 8 2 14-6 14s-11-6-6-14c2-4 2-10 6-10z" fill="${c}" ${K}/><path d="M0-12v-3" stroke="#5A3A1C" stroke-width="2"/>`;
+    case "fig": return `<path d="M0-13c3 0 3 4 6 8 6 8 3 17-6 17S-12 3-6-5c3-4 3-8 6-8z" fill="${c}" ${K}/><path d="M-3 6q3 3 6 0" stroke="#E7A1C4" stroke-width="1.5" fill="none"/>`;
+    case "banana": return `<path d="M-13-6q4 18 26 10l1 3Q-6 18-15-4z" fill="${c}" ${K}/><path d="M-13-6l-2-3" stroke="#5A3A1C" stroke-width="2.5"/>`;
+    case "pineapple": return `<ellipse cy="4" rx="8" ry="11" fill="${c}" ${K}/><path d="M-6-2l12 10M6-2L-6 8M-7 6l9 7M7 6l-9 7" stroke="#B07A12" stroke-width="1.2"/><path d="M0-7l-5-9 4 4 1-7 1 7 4-4z" fill="#3E8E3A" ${K}/>`;
+    case "mango": return `<path d="M-9 2c0-10 8-14 14-12 7 3 6 14 0 18-6 5-14 2-14-6z" fill="${c}" ${K}/><path d="M3-8q6-2 8 4" stroke="#D7261E" stroke-width="3" fill="none" opacity=".6"/>`;
+    case "passion": return `<circle r="10" fill="${c}" ${K}/><circle cx="-3" cy="-2" r="1" fill="#E8D5F0"/><circle cx="3" cy="2" r="1" fill="#E8D5F0"/><circle cx="2" cy="-5" r="1" fill="#E8D5F0"/><circle cx="-4" cy="4" r="1" fill="#E8D5F0"/>`;
+    case "kiwi": return `<circle r="10" fill="#8A6A3A" ${K}/><circle r="7.5" fill="${c}"/><circle r="2.5" fill="#F4F0D0"/><g fill="#1E0E04">${[0,60,120,180,240,300].map(a=>`<circle cx="${(4.6*Math.cos(a*Math.PI/180)).toFixed(1)}" cy="${(4.6*Math.sin(a*Math.PI/180)).toFixed(1)}" r=".9"/>`).join("")}</g>`;
+    case "coco": return `<circle r="10" fill="#6A402C" ${K}/><path d="M-10 0a10 10 0 0 0 20 0z" fill="#F3EEE3" ${K}/>`;
+    case "berry": return `<g fill="${c}" ${K}><circle cx="-4" cy="2" r="5"/><circle cx="4" cy="2" r="5"/><circle cy="-5" r="5"/><circle cy="7" r="4.5"/></g>`;
+    case "strawberry": return `<path d="M-10-4q10-6 20 0-1 12-10 17-9-5-10-17z" fill="${c}" ${K}/><path d="M-8-5l4-4 4 3 4-3 4 4z" fill="#3FA34D" ${K}/><g fill="#FCE38A"><circle cx="-4" cy="1" r=".9"/><circle cx="3" cy="2" r=".9"/><circle cy="7" r=".9"/></g>`;
+    case "cherry": return `<path d="M-5 4q2-14 8-16M5 6q0-10-2-18" stroke="#3E6B2A" stroke-width="1.8" fill="none"/><circle cx="-5" cy="6" r="6" fill="${c}" ${K}/><circle cx="6" cy="8" r="6" fill="${c}" ${K}/>`;
+    case "rhubarb": return `<path d="M-3 12l2-20 4 0-2 20z" fill="${c}" ${K}/><path d="M1-8q-10-8-4-12 6 2 10-2 4 8-6 14z" fill="#3FA34D" ${K}/>`;
+    case "date": return `<ellipse rx="5.5" ry="10" fill="${c}" ${K} transform="rotate(25)"/>`;
+    case "stick": return `<rect x="-14" y="-3.5" width="28" height="7" rx="3" fill="${c}" ${K} transform="rotate(-25)"/><path d="M-12 1h24" stroke="#6A3A18" stroke-width="1" transform="rotate(-25)"/>`;
+    case "pod": return `<path d="M-14 8Q0-4 14-10" stroke="#1E0E04" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M-14 8Q0-4 14-10" stroke="${c}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+    case "star": return `<path d="${Array.from({length:16},(_,k)=>{const r=k%2?4:11,a=k*Math.PI/8;return (k?"L":"M")+(r*Math.cos(a)).toFixed(1)+" "+(r*Math.sin(a)).toFixed(1)}).join("")}z" fill="${c}" ${K}/><circle r="2.5" fill="#3A1E0E"/>`;
+    case "seeds": return `<g fill="${c}" ${K}><ellipse cx="-5" rx="3.5" ry="6" transform="rotate(-20 -5 0)"/><ellipse cx="4" cy="-2" rx="3.5" ry="6" transform="rotate(15 4 -2)"/><ellipse cx="0" cy="7" rx="3.5" ry="5.5" transform="rotate(80 0 7)"/></g>`;
+    case "pepper": return `<g fill="#2B2B2B" ${K}>${[[-5,-3],[3,-5],[6,3],[-2,5],[-7,5],[1,0]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="3"/>`).join("")}</g>`;
+    case "clove": return `<g fill="${c}" ${K}><path d="M-1-2h2v14h-2z"/><circle cy="-6" r="4.5"/></g>`;
+    case "chili": return `<path d="M-12-6q4 16 20 14 4-1 4-4-12 1-18-12z" fill="${c}" ${K}/><path d="M-12-6l-2-5 5 3z" fill="#3FA34D" ${K}/>`;
+    case "ginger": return `<path d="M-12 2q-2-8 6-7 2-7 8-4 6-3 9 3 4 6-3 9-8 4-14 2-6 0-6-3z" fill="${c}" ${K}/>`;
+    case "leaf": return `<path d="M-11 9Q-10-10 11-10 9 10-11 9z" fill="${c}" ${K}/><path d="M-9 7L8-8" stroke="#1E5A27" stroke-width="1.4"/>`;
+    case "sprig": return `<path d="M-12 10L12-10" stroke="#5A3A1C" stroke-width="2"/>${[-8,-3,2,7].map(t=>`<ellipse cx="${t}" cy="${-t*0.8-4}" rx="1.8" ry="5" fill="${c}" transform="rotate(-50 ${t} ${-t*0.8-4})"/><ellipse cx="${t+2}" cy="${-t*0.8+3}" rx="1.8" ry="5" fill="${c}" transform="rotate(40 ${t+2} ${-t*0.8+3})"/>`).join("")}`;
+    case "stalk": return `<path d="M-4 13l2-26 4 0-0 26z" fill="${c}" ${K}/><path d="M0-12q6-4 8 2M0-8q-6-4-9 1" stroke="#7FA83E" stroke-width="2.5" fill="none"/>`;
+    case "bean": return `<ellipse rx="8" ry="11" fill="${c}" ${K} transform="rotate(30)"/><path d="M-3-8q6 8 0 16" stroke="#1E0E04" stroke-width="1.6" fill="none" transform="rotate(30)"/>`;
+    case "flower": return `<g fill="${c}" ${K}>${[0,72,144,216,288].map(a=>`<ellipse cy="-7" rx="5" ry="7" transform="rotate(${a})"/>`).join("")}</g><circle r="3" fill="#F2C230"/>`;
+    case "candy": return `<path d="M-8-2l-7-6 1 8-1 8 7-6zM8-2l7-6-1 8 1 8-7-6z" fill="${c}" ${K}/><ellipse rx="9" ry="7" fill="${c}" ${K}/><path d="M-5-3q5-3 10 0" stroke="#fff" stroke-width="1.6" opacity=".5" fill="none"/>`;
+    case "licorice": return `<circle r="10" fill="${c}" ${K}/><circle r="6.5" fill="none" stroke="#5A5A5A" stroke-width="1.6"/><circle r="3" fill="#E2363F"/>`;
+    case "lavender": return `<path d="M0 13V-8" stroke="#5E7D4E" stroke-width="2"/><g fill="${c}" ${K}>${[-12,-7,-2,3].map(y=>`<ellipse cx="-2.5" cy="${y}" rx="2.5" ry="3"/><ellipse cx="2.5" cy="${y+2}" rx="2.5" ry="3"/>`).join("")}</g>`;
+  }
+  return `<circle r="10" fill="${c}" ${K}/>`;
+}
+function sealClass(v){return "seal "+(v||"n");}
+/* mode "label" : grande étiquette (page 1) ; mode "mini" : bouteille remplie de parfums (page 2) */
+function bottleSVG(mode,verdict){
+  const sel=S.sel; let fr="";
+  if(mode==="label"){
+    const n=sel.length, gap=Math.min(26,128/Math.max(1,n)), sc=Math.min(1,gap/24), x0=120-gap*(n-1)/2;
+    fr=sel.map((id,i)=>`<g transform="translate(${(x0+gap*i).toFixed(1)} ${i%2?170:182}) scale(${sc.toFixed(2)})">${icon(id)}</g>`).join("");
+  }else{
+    const items=[]; sel.forEach(id=>{items.push(id); if(get(id).fruit) items.push(id);});
+    const list=items.slice(0,14); let seed=3; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+    const cols=3, cw=52, x0=68;
+    fr=list.map((id,i)=>{const r=Math.floor(i/cols),cI=i%cols; const x=x0+cI*cw+(r%2?16:0)+(rnd()-.5)*8, y=318-r*44+(rnd()-.5)*8;
+      return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${((rnd()-.5)*50).toFixed(0)}) scale(1.75)">${icon(id)}</g>`}).join("");
+  }
+  return `<svg viewBox="0 0 240 440" aria-hidden="true">
+   <defs><linearGradient id="glass${mode}" x1="0" x2="1"><stop offset="0" stop-color="#2B1407"/><stop offset=".35" stop-color="#7A3B0E"/><stop offset=".6" stop-color="#5C2A09"/><stop offset="1" stop-color="#1E0D04"/></linearGradient>
+   <linearGradient id="cork${mode}" x1="0" x2="1"><stop offset="0" stop-color="#9C7246"/><stop offset=".5" stop-color="#C79A64"/><stop offset="1" stop-color="#8A6038"/></linearGradient>
+   <clipPath id="clip${mode}"><path d="M100 62h40v58q0 18 26 36 q38 26 38 74v176q0 26-26 26H62q-26 0-26-26V230q0-48 38-74 26-18 26-36z"/></clipPath></defs>
+   <rect x="98" y="4" width="44" height="40" rx="5" fill="url(#cork${mode})" stroke="#2A1A0D" stroke-width="2.5"/>
+   <path d="M100 62h40v58q0 18 26 36 q38 26 38 74v176q0 26-26 26H62q-26 0-26-26V230q0-48 38-74 26-18 26-36z" fill="url(#glass${mode})" stroke="#120802" stroke-width="3.5"/>
+   <g clip-path="url(#clip${mode})" opacity=".95">${fr}</g>
+   <path d="M108 72v44q-2 22-30 42-28 22-28 64v170" stroke="#FFD9A0" stroke-opacity=".28" stroke-width="7" fill="none" stroke-linecap="round"/>
+   <ellipse cx="120" cy="424" rx="78" ry="7" fill="#000" opacity=".25"/>
+   ${mode==="label"
+     ?`<path d="M44 200 q76-16 152 0 v188 q-76 14-152 0z" fill="#EBD7A8" stroke="#5A3A1C" stroke-width="3"/><path d="M52 208 q68-13 136 0 v172 q-68 12-136 0z" fill="none" stroke="#9C7744" stroke-width="1.5" stroke-dasharray="5 4"/>`
+     :`<path d="M52 350 q68-10 136 0 v44 q-68 10-136 0z" fill="#EBD7A8" stroke="#5A3A1C" stroke-width="2.5"/><text x="120" y="380" text-anchor="middle" font-family="Pirata One, serif" font-size="22" fill="#9E2A17">Rhum Arrangé</text>`}
+   <path class="${sealClass(verdict)}" d="M92 34h56v26q0 8-6 12l-4 6 2 10-6-6-4 12-4-10-6 8 1-12-8 6 2-10-6-4q-6-4-6-12z" stroke="#2A1A0D" stroke-width="2"/>
+  </svg>`;
+}
+
+/* ---------- La bouteille finale ---------- */
+function torn(){
+  let r=11; const R=()=>(r=(r*9301+49297)%233280)/233280;
+  const L=48,Rt=252,T=316,Bm=470; let d=`M${L} ${T}`;
+  for(let x=L+8;x<Rt;x+=8) d+=` L${x} ${(T+(R()-.5)*7).toFixed(1)}`;
+  d+=` L${Rt} ${T}`;
+  for(let y=T+10;y<Bm;y+=10) d+=` L${(Rt+(R()-.5)*3).toFixed(1)} ${y}`;
+  d+=` L${Rt} ${Bm}`;
+  for(let x=Rt-8;x>L;x-=8) d+=` L${x} ${(Bm+(R()-.5)*7).toFixed(1)}`;
+  d+=` L${L} ${Bm}`;
+  for(let y=Bm-10;y>T;y-=10) d+=` L${(L+(R()-.5)*3).toFixed(1)} ${y}`;
+  return d+"Z";
+}
+function bigBottleSVG(){
+  const q=quantities(), isBM=S.method==="bm";
+  const names=S.sel.map(id=>get(id).nom);
+  const line=names.join(" · "), fs=Math.max(11,Math.min(19,330/Math.max(10,line.length)));
+  const date=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  // parfums dans le rhum : au-dessus et en dessous de l'étiquette
+  const items=[]; S.sel.forEach(id=>{items.push(id); if(get(id).fruit){items.push(id);items.push(id);}});
+  let seed=5; const rnd=()=>(seed=(seed*9301+49297)%233280)/233280;
+  const zones=[[226,300],[478,522]]; const placed=[];
+  items.slice(0,18).forEach((id,i)=>{const z=zones[i%2]; const x=70+rnd()*160, y=z[0]+rnd()*(z[1]-z[0]);
+    placed.push(`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${((rnd()-.5)*70).toFixed(0)}) scale(${(1.5+rnd()*.5).toFixed(2)})">${icon(id)}</g>`);});
+  const mini=S.sel.slice(0,6).map((id,i,a)=>{const gap=34,x=150-gap*(a.length-1)/2+gap*i; return `<g transform="translate(${x} 392) scale(1.05)">${icon(id)}</g>`}).join("");
+  const B="M128 92h44v84q0 22 34 44q54 34 54 92v194q0 40-40 40H80q-40 0-40-40V312q0-58 54-92q34-22 34-44z";
+  return `<svg viewBox="0 0 300 600" class="big-bottle" role="img" aria-label="Ta bouteille de rhum arrangé">
+  <defs>
+    <linearGradient id="bgGlass" x1="0" x2="1"><stop offset="0" stop-color="#140A03" stop-opacity=".95"/><stop offset=".18" stop-color="#3B2410" stop-opacity=".55"/><stop offset=".5" stop-color="#2A1A0B" stop-opacity=".25"/><stop offset=".82" stop-color="#3B2410" stop-opacity=".55"/><stop offset="1" stop-color="#0E0602" stop-opacity=".95"/></linearGradient>
+    <linearGradient id="bgRum" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F2B24C"/><stop offset=".45" stop-color="#C6701C"/><stop offset="1" stop-color="#6E340C"/></linearGradient>
+    <linearGradient id="bgRumSide" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset=".25" stop-color="#000" stop-opacity="0"/><stop offset=".75" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></linearGradient>
+    <linearGradient id="bgCork" x1="0" x2="1"><stop offset="0" stop-color="#7A5530"/><stop offset=".45" stop-color="#D0A46C"/><stop offset="1" stop-color="#6E4A28"/></linearGradient>
+    <radialGradient id="bgWax" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#E0473A"/><stop offset=".55" stop-color="#9E1E12"/><stop offset="1" stop-color="#560A04"/></radialGradient>
+    <linearGradient id="bgPaper" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3E3BC"/><stop offset=".6" stop-color="#E6CF9C"/><stop offset="1" stop-color="#CDAE72"/></linearGradient>
+    <radialGradient id="bgBurn" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#5A3410" stop-opacity=".55"/></radialGradient>
+    <clipPath id="bgClip"><path d="${B}"/></clipPath>
+    <filter id="soft"><feGaussianBlur stdDeviation=".6"/></filter>
+  </defs>
+  <ellipse cx="150" cy="572" rx="118" ry="12" fill="#000" opacity=".45"/>
+  <g clip-path="url(#bgClip)">
+    <rect x="0" y="0" width="300" height="600" fill="#1A0E05"/>
+    <g class="rum-fill"><rect x="0" y="206" width="300" height="400" fill="url(#bgRum)"/>
+      <g filter="url(#soft)" opacity=".92">${placed.join("")}</g>
+      <ellipse cx="150" cy="206" rx="130" ry="7" fill="#FFD27A" opacity=".55"/>
+      ${Array.from({length:14},()=>`<circle cx="${(60+rnd()*180).toFixed(0)}" cy="${(240+rnd()*290).toFixed(0)}" r="${(1+rnd()*2).toFixed(1)}" fill="#FFF3D0" opacity=".5"/>`).join("")}
+    </g>
+    <rect x="0" y="0" width="300" height="600" fill="url(#bgRumSide)"/>
+    <rect x="0" y="0" width="300" height="600" fill="url(#bgGlass)"/>
+  </g>
+  <path d="${B}" fill="none" stroke="#0A0502" stroke-width="4"/>
+  <path d="M60 300q2-50 46-76" stroke="#fff" stroke-opacity=".35" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M58 330v180" stroke="#fff" stroke-opacity=".22" stroke-width="10" stroke-linecap="round"/>
+  <path d="M72 336v150" stroke="#fff" stroke-opacity=".12" stroke-width="4" stroke-linecap="round"/>
+  <path d="M244 330v170" stroke="#fff" stroke-opacity=".1" stroke-width="5" stroke-linecap="round"/>
+  <path d="M138 100v70" stroke="#fff" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/>
+  <rect x="122" y="86" width="56" height="12" rx="4" fill="#2A1608" stroke="#0A0502" stroke-width="2"/>
+  <rect x="130" y="18" width="40" height="74" rx="6" fill="url(#bgCork)" stroke="#2A1A0D" stroke-width="2.5"/>
+  <g fill="#5A3A1C" opacity=".5">${Array.from({length:22},()=>`<circle cx="${(134+rnd()*32).toFixed(1)}" cy="${(24+rnd()*62).toFixed(1)}" r="${(.6+rnd()*1.1).toFixed(1)}"/>`).join("")}</g>
+  <path d="M124 66 Q150 74 176 66 V92 Q176 100 168 104 l-3 14 -6-9 -5 16 -4-14 -6 10 -2-15 -8 8 1-12 Q124 96 124 88z" fill="url(#bgWax)" stroke="#3A0703" stroke-width="2"/>
+  <g stroke="#C9A46A" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M126 120q24 8 48 0M126 128q24 8 48 0"/><path d="M174 124q14 8 10 26M174 124q4 14 18 20"/></g>
+  <circle cx="150" cy="166" r="17" fill="url(#bgWax)" stroke="#3A0703" stroke-width="2"/>
+  <g transform="translate(150 166) scale(.42)" fill="#4A0904" opacity=".85"><path d="M0-20c-12 0-19 8-19 17 0 6 3 10 7 12v6h24v-6c4-2 7-6 7-12 0-9-7-17-19-17z"/></g>
+  <g transform="translate(150 166) scale(.42)" fill="#E0473A"><circle cx="-7" cy="-4" r="4.5"/><circle cx="7" cy="-4" r="4.5"/></g>
+  <g class="label-in">
+    <path d="${torn()}" fill="url(#bgPaper)" stroke="#6E4A20" stroke-width="2"/>
+    <path d="${torn()}" fill="url(#bgBurn)"/>
+    <rect x="60" y="328" width="180" height="132" rx="3" fill="none" stroke="#8A6416" stroke-width="1.3"/>
+    <rect x="64" y="332" width="172" height="124" rx="2" fill="none" stroke="#8A6416" stroke-width=".7" stroke-dasharray="3 3"/>
+    <text x="150" y="354" text-anchor="middle" font-family="Pirata One, serif" font-size="25" fill="#9E2A17">Rhum Arrangé</text>
+    <text x="150" y="372" text-anchor="middle" font-family="Alegreya, Georgia, serif" font-style="italic" font-weight="700" font-size="${fs.toFixed(1)}" fill="#3A2408">${esc(line)}</text>
+    ${mini}
+    <path d="M78 410h144" stroke="#8A6416" stroke-width="1"/>
+    <text x="104" y="440" text-anchor="middle" font-family="Pirata One, serif" font-size="30" fill="#2A1A0D">${fr(S.vol)} L</text>
+    <text x="196" y="440" text-anchor="middle" font-family="Pirata One, serif" font-size="30" fill="#2A1A0D">${q.final}°</text>
+    <g transform="translate(150 430) scale(.5)"><path d="M-16 14 16-14M-16-14 16 14" stroke="#2A1A0D" stroke-width="5" stroke-linecap="round"/><path d="M0-14c-9 0-14 6-14 12 0 4 2 7 5 9v5h18v-5c3-2 5-5 5-9 0-6-5-12-14-12z" fill="#EBD7A8" stroke="#2A1A0D" stroke-width="2.5"/><circle cx="-5" cy="-2" r="3" fill="#2A1A0D"/><circle cx="5" cy="-2" r="3" fill="#2A1A0D"/></g>
+    <text x="150" y="453" text-anchor="middle" font-family="Alegreya, Georgia, serif" font-size="9.5" fill="#6B4E2E">${isBM?"Bain-marie":"Macération naturelle"} · mis en bouteille le ${date}</text>
+  </g>
+  </svg>`;
+}
+function openReveal(){
+  if(!S.sel.length) return;
+  const o=$("reveal"); o.querySelector(".reveal-stage").innerHTML=bigBottleSVG(); o.hidden=false; document.body.style.overflow="hidden";
+  o.querySelector("#revealGo").focus({preventScroll:true});
+}
+function closeReveal(){ $("reveal").hidden=true; document.body.style.overflow=""; }
+
+/* ---------- Rendu ---------- */
+const OPEN=new Set(); let PICK=false, DONE=true;
+const TITLES={v:"Bonne association",o:"Association moyenne",r:"Mauvaise idée"};
+const PAGES=["Bouteille","Parfums","Méthode","Réalisation"];
+function showPage(n){
+  if(n>=3&&!S.sel.length) n=2;
+  S.page=n; $("p1").hidden=n!==1; $("p2").hidden=n!==2; $("p3").hidden=n!==3; $("recipe").hidden=n!==4;
+  if(n===4) buildRecipe(); else if(tInt){clearInterval(tInt);tInt=null;}
+  render(); window.scrollTo({top:0});
+}
+function render(){
+  const ev=evaluate(), t=timings(), q=quantities();
+  $("progress").innerHTML=PAGES.map((p,i)=>`<button data-page="${i+1}" ${S.page===i+1?'aria-current="step"':""} class="${S.page>i+1?"past":""}">${i+1}. ${p}</button>`).join("");
+  // Page 1
+  $("blNames").textContent=S.sel.length?S.sel.map(id=>get(id).nom).join(" · "):"aucun pour l'instant";
+  $("volVal").textContent=fr(S.vol)+" L"; $("degVal").textContent=S.deg+"°";
+  $("rumSeg").innerHTML=[40,50,55,62].map(d=>`<button data-rum="${d}" aria-pressed="${S.rum===d}">${d}°</button>`).join("");
+  const has=S.sel.length;
+  $("methodList").innerHTML=[["bm","Bain-marie",has?`${hm(t.bm)} à 60-65 °C, puis 3-4 jours de repos`:"1 à 3 h à 60-65 °C, puis 3-4 jours de repos"],["mac","Macération naturelle",has?`${t.mac} semaines à l'abri de la lumière`:"3 à 10 semaines à l'abri de la lumière"]]
+    .map(([k,n,d])=>`<button class="item" data-method="${k}" aria-pressed="${S.method===k}"><span class="tx"><strong>${n}</strong><span>${d}</span></span><span class="ck">✓</span></button>`).join("");
+  const sweetDesc={sirop:"Déjà liquide, se mélange tout seul",poudre:"Sucre de canne blond, à bien dissoudre",miel:"Doux et parfumé, à détendre dans le rhum"};
+  $("sweetList").innerHTML=Object.entries(SWEET).map(([k,v])=>`<button class="item" data-sweet="${k}" aria-pressed="${S.sweet===k}"><span class="tx"><strong>${v.nom}</strong><span>${sweetDesc[k]}</span></span><span class="ck">✓</span></button>`).join("");
+  $("sugarSeg").innerHTML=[[0,"Sans"],[6,"Léger"],[10,"Moyen"],[15,"Gourmand"]].map(([v,l])=>`<button data-sugar="${v}" aria-pressed="${S.sugar===v}">${l}</button>`).join("");
+  // Page 2
+  $("jar").innerHTML=bottleSVG("mini",ev.overall); $("bottle1").innerHTML=bottleSVG("label",ev.overall);
+  const top=ev.notes[0], rest=ev.notes.slice(1,5);
+  $("verdict").innerHTML=ev.overall
+    ?`<div class="badge ${ev.overall}"><i></i>${TITLES[ev.overall]}</div><p class="reason">${esc(top[1])}</p>
+      ${rest.length?`<details class="more"><summary>${rest.length} autre${rest.length>1?"s":""} remarque${rest.length>1?"s":""}</summary><ul>${rest.map(n=>`<li>${esc(n[1])}</li>`).join("")}</ul></details>`:""}
+      <div class="picked">${S.sel.map(id=>`<span class="pk ${ev.per[id]}">${esc(get(id).nom)}<button data-rm="${id}" aria-label="Retirer">×</button></span>`).join("")}</div>`
+    :`<div class="badge n"><i></i>Bocal vide</div><p class="reason" style="color:var(--muted)">Choisis tes parfums ci-dessous.</p>`;
+  const qOf={}; q.items.forEach(x=>qOf[x.id]=x.label);
+  const row=i=>{const on=S.sel.includes(i.id);
+    return `<button class="item" data-id="${i.id}" aria-pressed="${on}"><span class="sw" style="background:${colOf(i.id)}"></span><span class="tx"><strong>${esc(i.nom)}</strong>${enSaison(i.id)?`<span class="saison">de saison</span>`:""}${FORME[i.id]?`<span>${esc(FORME[i.id][0])}</span>`:""}</span><span class="ck">${on?"✓":"+"}</span></button>`};
+  const customs=S.sel.map(get).filter(i=>i.custom);
+  const head=(key,label,list)=>{const open=OPEN.has(key),n=list.filter(i=>S.sel.includes(i.id)).length;
+    return `<button class="fam-head" data-fam="${key}" aria-expanded="${open}"><span>${label}</span>${n?`<b>${n}</b>`:""}<i>${open?"−":"+"}</i></button>${open?`<div class="fam-body">${list.map(row).join("")}</div>`:""}`};
+  $("pTitle").hidden=!PICK; $("pickBtn").hidden=PICK||has;
+  $("customBox").hidden=!PICK;
+  $("askMore").innerHTML=PICK
+    ?`<button class="link" id="stopPick">Annuler</button>`
+    :!has?""
+    :DONE?`<button class="btn wide" id="morePick">+ Ajouter un parfum</button>`
+    :`<div class="ask-box"><p>Veux-tu ajouter un autre parfum ?</p><div class="yn"><button class="btn amber" id="yesPick">Oui</button><button class="btn" id="noPick">Non, c'est bon</button></div></div>`;
+  if(!PICK){$("grid").innerHTML="";}
+  else $("grid").innerHTML=(ING.some(i=>enSaison(i.id))?head("SAISON",`Fruits de saison · ${MOIS[NOW_M-1]}`,ING.filter(i=>enSaison(i.id))).replace('class="fam-head"','class="fam-head saison-head"'):"")+Object.keys(FAMS).filter(f=>ING.some(i=>i.fam===f)).map(f=>head(f,FAMS[f],ING.filter(i=>i.fam===f))).join("")
+    +(customs.length?head("CUSTOM","Tes parfums",customs):"");
+  $("ticketTitle").textContent=`Quantités pour ${fr(S.vol)} L`;
+  $("ticket").innerHTML=has?`${q.items.map(x=>`<li><i class="sw" style="background:${colOf(x.id)}"></i><span>${esc(x.it.nom)}${x.prepared&&x.buy>parseInt(x.label)?`<small class="sub">environ <span class="buy">${x.buy} g entiers à acheter</span></small>`:""}</span><b>${x.label}</b></li>`).join("")}
+      ${q.sugar.none?"":`<li><i class="sw" style="background:#E8D2A0"></i><span>${SWEET[S.sweet].nom}</span><b>${q.sugar.amount}</b></li>`}
+      <li><i class="sw" style="background:#F2A541"></i><span>Rhum blanc ${S.rum}°</span><b>${cl(q.rum)}</b></li>
+      ${q.water?`<li><i class="sw" style="background:#9FC9E8"></i><span>Eau de source, à la fin</span><b>${cl(q.water)}</b></li>`:""}
+      <li class="tot"><span>Résultat</span><b>${fr(S.vol)} L à ${q.final}°</b></li>`
+    :`<li><span style="color:var(--muted)">Ajoute un parfum pour voir les quantités.</span></li>`;
+  const showQ=has&&!PICK&&DONE;
+  $("toMethod").hidden=!showQ; $("sabres2").hidden=!showQ;
+  $("warn").hidden=!q.warn; $("warn").textContent=q.warn||"";
+  $("goBtn").disabled=!has;
+  save();
+}
+
+/* ---------- Parfum libre : avis de Claude ---------- */
+let samplePromise=(window.claude&&claude.use)?claude.use("sample").catch(()=>null):Promise.resolve(null);
+const BAD=/(lait|crème|creme|fromage|beurre|yaourt|oeuf|œuf|viande|jambon|poulet|poisson|crevette|\bail\b|oignon|échalote|poireau|chou|champignon|cornichon|olive|\bsel\b|moutarde|vinaigre|pomme de terre|patate)/i;
+async function askCustom(){
+  const name=$("customName").value.trim(); if(!name) return;
+  const out=$("askOut"); out.hidden=false; out.textContent="Je goûte en pensée…"; $("askBtn").disabled=true;
+  const others=S.sel.map(id=>get(id).nom).join(", ")||"aucun";
+  const sample=await samplePromise; let res=null;
+  if(sample){try{res=await sample.json(`Tu es expert en rhum arrangé (fruits et épices macérés dans du rhum blanc agricole). Ingrédient proposé : "${name}". Déjà choisis : ${others}.
+Réponds uniquement avec un objet JSON :
+{"nom":"nom en français","verdict":"vert|orange|rouge","raison":"une phrase courte en français","famille":"AGR|EXO|ROU|NOY|AUT|EPD|EPF|HER|GOU|FLO|AUTRE","fruit":true,"quantite":450,"unite":"g|pièce|gousse|bâton|étoile|feuille|brin|c. à café","eau":0.8,"preparation":"une phrase courte","bainmarie_minutes":120,"maceration_semaines":6,"retrait_jours":0}
+rouge = inadapté (laitage, viande, légume salé, toxique…) ou très mauvaise association ; orange = moyen ; vert = bon. quantite pour 1 litre. fruit = true seulement pour un fruit en morceaux. eau = part d'eau (0 pour une épice). retrait_jours = jours avant de le retirer en macération à froid (0 = on le laisse). Unités françaises, pas d'anglicismes.`,{modelTier:"default"});}
+    catch(e){if(e&&e.code==="not_granted") samplePromise=Promise.resolve(null); res=null;}}
+  if(!res||typeof res!=="object"){const bad=BAD.test(name); res={nom:name[0].toUpperCase()+name.slice(1),verdict:bad?"rouge":"orange",raison:bad?"Pas fait pour un rhum arrangé.":"Je n'ai pas pu vérifier : à tenter en petite quantité.",famille:"AUTRE",fruit:false,quantite:20,unite:"g",eau:.5,preparation:"Rince et coupe en petits morceaux.",bainmarie_minutes:90,maceration_semaines:4,retrait_jours:0};}
+  const units=["g","pièce","gousse","bâton","étoile","feuille","brin","c. à café","tige","clou","fève"], id="c_"+Date.now();
+  const it={id,custom:true,nom:String(res.nom||name).slice(0,40),rec:String(res.nom||name).toLowerCase(),verdict:{vert:"v",orange:"o",rouge:"r"}[res.verdict]||"o",
+    raison:String(res.raison||"").slice(0,200),fam:FAMS[res.famille]?res.famille:"AUTRE",fruit:!!res.fruit,qty:Math.min(800,Math.max(.5,+res.quantite||20)),
+    unit:units.includes(res.unite)?res.unite:"g",eau:Math.min(.95,Math.max(0,+res.eau||0)),prep:String(res.preparation||"").slice(0,200),
+    bm:Math.min(240,Math.max(0,+res.bainmarie_minutes||0)),mac:Math.min(16,Math.max(0,+res.maceration_semaines||0)),ret:Math.max(0,+res.retrait_jours||0)||undefined};
+  S.custom[id]=it; S.sel.push(id);
+  out.innerHTML=`<b style="color:var(--${{v:"ok",o:"mid",r:"bad"}[it.verdict]})">${esc(it.nom)} : ${TITLES[it.verdict].toLowerCase()}.</b> ${esc(it.raison)}`;
+  $("customName").value=""; $("askBtn").disabled=false; OPEN.clear(); PICK=false; DONE=false; render();
+}
+
+/* ---------- Recette ---------- */
+function buildRecipe(){
+  const q=quantities(),t=timings(),isBM=S.method==="bm";
+  const its=[...q.items].sort((a,b)=>(b.it.fruit?1:0)-(a.it.fruit?1:0));
+  const names=S.sel.map(id=>get(id).nom).join(" · ");
+  const jars=[.5,.75,1,1.5,2,3,5]; let jar=jars.find(j=>j>=q.jarNeed)||5, split=0;
+  if(isBM&&q.jarNeed>1.6){split=Math.ceil(q.jarNeed/1.1);jar=1;}
+  const rets=its.filter(x=>x.it.ret&&!x.it.fin).sort((a,b)=>a.it.ret-b.it.ret);
+  const late=its.filter(x=>x.it.fin);
+  const lateStep=(x,p)=>({v:"Ajoute",t:x.it.nom,q:x.label,p:p+" "+x.it.prep,f:FORME[x.id]?.[0],vr:FORME[x.id]?.[1]});
+  const steps=[];
+  steps.push({v:"Prépare",t:split?`${split} bocaux de 1 L`:`Le bocal de ${fr(jar)} L`,p:"Avec joint, lavé à l'eau chaude et bien sec."+(split?` Mets 1/${split} de chaque ingrédient dans chaque bocal.`:"")});
+  its.filter(x=>!x.it.fin).forEach(x=>steps.push({v:"Ajoute",t:x.it.nom,q:x.label,p:(x.prepared&&x.buy>parseInt(x.label)?`Environ ${x.buy} g de fruits entiers à acheter. `:"")+x.it.prep,f:FORME[x.id]?.[0],vr:FORME[x.id]?.[1]}));
+  if(!q.sugar.none) steps.push({v:"Ajoute",t:S.sweet==="miel"?"Le miel":S.sweet==="poudre"?"Le sucre en poudre":"Le sirop Canadou",q:q.sugar.amount,
+    p:S.sweet==="miel"?"Détends-le d'abord dans un petit verre de rhum, puis verse le tout.":S.sweet==="poudre"?"Verse-le sur les fruits.":"Verse-le directement, il est déjà liquide."});
+  steps.push({v:"Verse",t:`Le rhum ${S.rum}°`,q:cl(q.rum),p:"Les fruits doivent être entièrement couverts. Pas d'eau maintenant."});
+  steps.push({v:"Ferme",t:"Le bocal",p:"Laisse 2 cm de vide sous le couvercle."+(S.sweet==="poudre"?" Secoue doucement pour dissoudre le sucre.":"")});
+  if(isBM){
+    steps.push({v:"Installe",t:"Le bain-marie à froid",p:"Torchon au fond de la casserole, bocal dessus, eau froide jusqu'aux ¾.",a:"Jamais un bocal froid dans de l'eau chaude."});
+    steps.push({v:"Chauffe",t:"Jusqu'à 60-65 °C",p:"Feu doux, thermomètre dans l'eau. Compte 15 à 20 min.",a:"Jamais plus de 70 °C."});
+    steps.push({v:"Maintiens",t:"60-65 °C",q:hm(t.bm),timer:t.bm,p:"Contrôle toutes les 15 min. Trop chaud : baisse le feu ou ajoute un peu d'eau froide sur le côté."});
+    steps.push({v:"Laisse refroidir",t:"Dans l'eau",q:"2-3 h",p:"Feu éteint, le bocal reste dans la casserole.",a:"Ne l'ouvre pas chaud."});
+    late.forEach(x=>steps.push(lateStep(x,"Une fois le bocal froid, ouvre-le et ajoute-la : elle parfumera le rhum pendant le repos, sans cuire.")));
+    steps.push({v:"Laisse reposer",t:"Au frais",q:"3-4 jours",p:"Retourne doucement le bocal une fois par jour."});
+  }else{
+    steps.push({v:"Range",t:"À l'abri de la lumière",p:"Placard ou cellier, jamais au soleil ni près d'un radiateur."});
+    rets.forEach(x=>steps.push({v:"Retire",t:x.it.nom,q:`J+${x.it.ret}`,p:"Goûte avant : si c'est encore discret, attends un jour ou deux."}));
+    steps.push({v:"Goûte",t:`Semaine ${Math.max(1,Math.round(t.mac/2))}`,p:`Pas assez sucré ? Ajoute ${SWEET[S.sweet].ajout}. Retourne le bocal chaque semaine.`});
+    late.forEach(x=>steps.push(lateStep(x,`${x.it.fin} jours avant la fin de la macération, ouvre le bocal et ajoute-la. Elle reste jusqu'au filtrage.`)));
+    steps.push({v:"Attends",t:"La fin de la macération",q:`${t.mac} sem.`});
+  }
+  steps.push({v:"Filtre",t:"Le rhum",p:"Passoire fine et filtre à café, sans presser les fruits."});
+  if(q.water) steps.push({v:"Ajoute",t:"L'eau de source",q:`${cl(q.water)} max`,p:`Ton rhum fait environ ${q.before}°. Verse petit à petit en goûtant : avec toute l'eau, environ ${q.final}°.`});
+  steps.push({v:"Goûte",t:"Et ajuste le sucre",p:`Pas assez sucré ? Ajoute ${SWEET[S.sweet].ajout}.`});
+  steps.push({v:"Mets en bouteille",t:"Et étiquette",p:`${names}, date du jour, ${q.final}°. ${isBM?"Encore meilleur après 2-3 semaines.":"Attends 2 à 4 semaines avant de servir."}`});
+
+  $("recipe").innerHTML=`<div><div class="kicker">${isBM?"Bain-marie":"Macération"} · ${fr(S.vol)} L · ≈ ${q.final}°</div><h1>${esc(names)}</h1></div>
+    <ol class="steps">${steps.map((s,i)=>`<li class="st" id="st${i}"><button class="n" data-step="${i}" aria-label="Étape ${i+1} faite">${i+1}</button><div>
+      ${s.q?`<span class="q">${s.q}</span>`:""}<div class="verb">${s.v}</div><h3>${esc(s.t)}</h3>${s.p?`<p>${esc(s.p).replace(/(\d+ g de fruits entiers à acheter)/,'<span class="buy">$1</span>')}</p>`:""}${s.f?`<p class="forme"><b>Forme :</b> ${esc(s.f)}</p>`:""}${s.vr?`<details><summary>Variantes possibles</summary><p>${esc(s.vr)}</p></details>`:""}${s.a?`<div class="alert">⚠ ${s.a}</div>`:""}
+      ${s.timer?`<div class="timer"><span class="clock" id="clock">${hm(s.timer)}</span><button class="btn amber" id="timerBtn" data-min="${s.timer}">Chrono</button></div>`:""}
+      </div></li>`).join("")}</ol>
+    <p style="margin:0;font-size:.8rem;color:var(--muted);text-align:center">Touche un numéro pour cocher l'étape.</p>
+    <button class="back" data-page="3">← Méthode</button>`;
+}
+
+/* ---------- Chrono ---------- */
+let tInt=null,wake=null;
+function beep(c){try{[0,.4,.8].forEach(t=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.2,c.currentTime+t);o.start(c.currentTime+t);o.stop(c.currentTime+t+.25);});}catch(e){}}
+function toggleTimer(b){
+  if(tInt){clearInterval(tInt);tInt=null;b.textContent="Chrono";$("clock").textContent=hm(+b.dataset.min);try{wake&&wake.release()}catch(e){}return;}
+  let c=null;try{c=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+  try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>wake=w).catch(()=>{})}catch(e){}
+  const end=Date.now()+b.dataset.min*60000;b.textContent="Stop";
+  const tick=()=>{const s=Math.max(0,Math.round((end-Date.now())/1000));
+    $("clock").textContent=`${Math.floor(s/3600)}:${String(Math.floor(s%3600/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+    if(!s){clearInterval(tInt);tInt=null;$("clock").textContent="Éteins le feu";b.textContent="Chrono";c&&beep(c);}};
+  tick();tInt=setInterval(tick,1000);
+}
+
+/* ---------- Événements ---------- */
+document.addEventListener("click",e=>{
+  const T=e.target, m=sel=>T.closest(sel);
+  let x;
+  if(x=m("[data-rm]")){const id=x.dataset.rm;S.sel=S.sel.filter(v=>v!==id);delete S.custom[id];return render();}
+  if(x=m("[data-fam]")){const f=x.dataset.fam;OPEN.has(f)?OPEN.delete(f):OPEN.add(f);return render();}
+  if(x=m("[data-id]")){const id=x.dataset.id;
+    if(S.sel.includes(id)){S.sel=S.sel.filter(v=>v!==id);}
+    else{S.sel=[...S.sel,id]; if(get(id).bonbon&&S.sugar){S.sugar=0; setTimeout(()=>{const o=$("askOut");o.hidden=false;o.textContent="Les bonbons sucrent déjà : j'ai réglé le sucre sur « Sans ».";},0);} OPEN.clear();PICK=false;DONE=false;if(!get(id).bonbon) $("askOut").hidden=true;}
+    render(); if(!PICK) $("p2").scrollIntoView({behavior:"smooth"}); return;}
+  if(m("#yesPick")||m("#morePick")){PICK=true;$("askOut").hidden=true;return render();}
+  if(m("#noPick")){DONE=true;render();$("toMethod").scrollIntoView({behavior:"smooth",block:"center"});return;}
+  if(m("#stopPick")){PICK=false;DONE=true;OPEN.clear();return render();}
+  if(m("#pickBtn")){PICK=true;return render();}
+  if(m("#bottleParfum")){if(!S.sel.length) PICK=true; return showPage(2);}
+  if(x=m("[data-page]")){if(!x.disabled) showPage(+x.dataset.page);return;}
+    if(x=m("[data-method]")){S.method=x.dataset.method;return render();}
+  if(x=m("[data-rum]")){S.rum=+x.dataset.rum;return render();}
+  if(x=m("[data-sweet]")){S.sweet=x.dataset.sweet;return render();}
+  if(x=m("[data-sugar]")){S.sugar=+x.dataset.sugar;return render();}
+  if(m("#volMinus")){S.vol=Math.max(.5,S.vol-.25);return render();}
+  if(m("#volPlus")){S.vol=Math.min(5,S.vol+.25);return render();}
+  if(m("#degMinus")){S.deg=Math.max(20,S.deg-1);return render();}
+  if(m("#degPlus")){S.deg=Math.min(50,S.deg+1);return render();}
+  if(m("#ageYes")){try{localStorage.setItem("rhum-age","ok")}catch(e){} $("ageGate").hidden=true; document.body.style.overflow=""; return;}
+  if(m("#ageNo")){$("ageText").textContent="Alors reviens nous voir à tes 18 ans, moussaillon !"; $("ageBtns").hidden=true; return;}
+  if(m("#goBtn")) return openReveal();
+  if(m("#revealGo")){closeReveal(); return showPage(4);}
+  if(m("#revealBack")) return closeReveal();
+  if(m("#askBtn")) return askCustom();
+  if(x=m("#timerBtn")) return toggleTimer(x);
+  if(x=m("[data-step]")){$("st"+x.dataset.step).classList.toggle("done");}
+});
+$("customName").addEventListener("keydown",e=>{if(e.key==="Enter")askCustom();});
+S.sel=S.sel.filter(id=>get(id)); if(!FAMS[S.tab]) S.tab="AUT";
+showPage(1);
+(function(){let ok=false;try{ok=localStorage.getItem("rhum-age")==="ok"}catch(e){} if(!ok){$("ageGate").hidden=false;document.body.style.overflow="hidden";}})();
+</script>
+
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
+</body></html>

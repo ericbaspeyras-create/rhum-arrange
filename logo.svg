@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+ <defs>
+  <radialGradient id="bg" cx=".5" cy=".4" r=".75"><stop offset="0" stop-color="#F0DDB2"/><stop offset="1" stop-color="#C9A266"/></radialGradient>
+  <linearGradient id="wood" x1="0" x2="1"><stop offset="0" stop-color="#5E3814"/><stop offset=".45" stop-color="#A86B34"/><stop offset="1" stop-color="#4E2E10"/></linearGradient>
+  <linearGradient id="hoop" x1="0" x2="1"><stop offset="0" stop-color="#2E2E2E"/><stop offset=".45" stop-color="#7A7A7A"/><stop offset="1" stop-color="#262626"/></linearGradient>
+ </defs>
+ <rect width="512" height="512" rx="0" fill="url(#bg)"/>
+ <!-- pirate -->
+ <g stroke="#1E0E04" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M176 262c0-62 36-104 80-104s80 42 80 104z" fill="#F2C9A0"/>
+  <path d="M190 236c20 34 112 34 132 0 4 30-10 60-66 60s-70-30-66-60z" fill="#4A2A12"/>
+  <path d="M226 238c20 8 40 8 60 0" stroke-width="8" fill="none"/>
+  <circle cx="290" cy="204" r="11" fill="#1E0E04"/>
+  <path d="M186 178l70 34 74-50" fill="none" stroke-width="7"/>
+  <ellipse cx="226" cy="206" rx="22" ry="18" fill="#1E0E04"/>
+  <path d="M244 214l14 18-20 2" fill="#E3A57A" stroke-width="6"/>
+  <path d="M150 166c40-12 72-60 106-60s66 48 106 60c-20 22-60 30-106 30s-86-8-106-30z" fill="#1E1A18"/>
+  <path d="M168 166c30 14 58 18 88 18s58-4 88-18" fill="none" stroke="#C8962E" stroke-width="7"/>
+ </g>
+ <g transform="translate(256 140) scale(1.1)">
+  <path d="M0-16c-9 0-14 6-14 12 0 4 2 7 5 9v5h18v-5c3-2 5-5 5-9 0-6-5-12-14-12z" fill="#F0E0BC" stroke="#1E0E04" stroke-width="3"/>
+  <circle cx="-5" cy="-4" r="3.2" fill="#1E0E04"/><circle cx="5" cy="-4" r="3.2" fill="#1E0E04"/>
+ </g>
+ <!-- tonneau -->
+ <g stroke="#1E0E04" stroke-width="9" stroke-linejoin="round">
+  <path d="M120 262h272c22 60 22 130 0 190H120c-22-60-22-130 0-190z" fill="url(#wood)"/>
+  <ellipse cx="256" cy="262" rx="136" ry="22" fill="#B98048"/>
+  <ellipse cx="256" cy="262" rx="110" ry="14" fill="#7A4A1E" stroke-width="5"/>
+ </g>
+ <g stroke="#3E2008" stroke-width="5" fill="none" opacity=".75">
+  <path d="M176 282c-10 52-10 110 0 166M220 284c-6 54-6 108 0 164M256 284v166M292 284c6 54 6 108 0 164M336 282c10 52 10 110 0 166"/>
+ </g>
+ <g stroke="#1E0E04" stroke-width="5">
+  <path d="M112 312h288v22H112zM112 392h288v22H112z" fill="url(#hoop)"/>
+ </g>
+ <circle cx="256" cy="430" r="0"/>
+ <rect x="236" y="350" width="40" height="26" rx="5" fill="#C8962E" stroke="#1E0E04" stroke-width="5"/>
+</svg>

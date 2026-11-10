@@ -3,7 +3,8 @@
 ## L'appli
 - Appli web d'une seule page, sans outil de construction : tout est dans `index.html` (style, données, code).
 - Installable sur téléphone : `manifest.webmanifest`, `sw.js` (mode hors ligne), icônes `icon-*.png` et `logo.svg` (tonneau avec un pirate).
-- Mise en ligne automatique par Netlify (projet `rhum-arrange`) à chaque envoi sur la branche `main`. Adresse : https://rhum-arrange.netlify.app
+- Mise en ligne automatique à chaque envoi sur la branche `main`, par GitHub Pages (adresse principale : https://ericbaspeyras-create.github.io/rhum-arrange/) et par Netlify (https://rhum-arrange.netlify.app, quand les crédits Netlify le permettent).
+- Le site est servi dans un sous-dossier (`/rhum-arrange/`) : garder tous les chemins relatifs (pas de `/` au début).
 
 ## Organisation de `index.html`
 - `ING` : la liste des parfums (famille, quantité pour 1 L, temps de bain-marie, semaines de macération, préparation…).
